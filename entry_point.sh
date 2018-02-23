@@ -21,7 +21,7 @@ file_env() {
 
 file_env 'ALPHAVANTAG_API_KEY'
 
-if [ "${1:0:1} = '-" ]; then
+if [ "${1:0:1}" = '-' ]; then
     exec python ./run_app.py "$@"
 else
     exec "$@"
