@@ -2,26 +2,24 @@ version: "3.5"
 
 services:
   get-stock-data:
-    image: daixiaozi/ece-568:dev-zhu-pp1
+    build: .
     secrets:
       - alphavantag_api_key
     environment:
       ALPHAVANTAG_API_KEY_FILE: /run/secrets/alphavantag_api_key
     depends_on:
-      - ece-568-postgres
+      - postgres
 
-  ece-568-postgres:
+  postgres:
     image: postgres
     secrets:
       - postgres_password
     environment:
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
     volumes:
-      - "ece-568-postgres-data:/var/lib/postgresql/data"
+      - "postgres-data:/var/lib/postgresql/data"
     ports:
       - "5432:5432"
-
-
 
 secrets:
   alphavantag_api_key:
@@ -30,4 +28,4 @@ secrets:
     file: ./postgres_password.txt
 
 volumes:
-  ece-568-postgres-data:
+  postgres-data:
