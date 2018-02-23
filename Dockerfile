@@ -7,4 +7,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD ["python", "./hello_world.py"]
+ENTRYPOINT ["entry_point.sh"]
+
+CMD ["python", "./run_app.py"]
