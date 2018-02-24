@@ -1,3 +1,4 @@
 requests
 apscheduler
 psycopg2-binary
+sqlalchemy

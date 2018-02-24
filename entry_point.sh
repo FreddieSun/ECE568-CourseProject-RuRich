@@ -20,6 +20,7 @@ file_env() {
 
 
 file_env 'ALPHAVANTAG_API_KEY'
+file_env 'POSTGRES_PASSWORD'
 
 if [ "${1:0:1}" = '-' ]; then
     exec python ./run_app.py "$@"

@@ -3,10 +3,14 @@ version: "3.5"
 services:
   get-stock-data:
     build: .
+    command: ["python", "./run_app.py", "GOOG", "FB"] # stock symbols
     secrets:
       - alphavantag_api_key
+      - postgres_password
     environment:
       ALPHAVANTAG_API_KEY_FILE: /run/secrets/alphavantag_api_key
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      PYTHONUNBUFFERED: "1"
     depends_on:
       - postgres
 

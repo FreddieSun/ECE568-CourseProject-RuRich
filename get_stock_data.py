@@ -1,8 +1,8 @@
 # -*- coding:utf-8 -*-
 
-import os
 import json
-from typing import List
+import os
+from typing import List, Union
 
 import requests
 
@@ -19,22 +19,29 @@ class GetStockData(object):
 
 
     @staticmethod
-    def get_daily_data(symbol: str):
+    def get_daily_data(symbol: Union[str, List[str]]):
         if not symbol:
             raise ValueError
-        res = requests.get(GetStockData.URL,
-                           params={
-                               'function': 'TIME_SERIES_DAILY',
-                               'symbol': symbol,
-                               'outputsize': 'full',
-                               'apikey': GetStockData.get_api_key()
-                           })
-        print(json.dumps(res.json(), indent=1))
+
+        if isinstance(symbol, str):
+            symbol = list(symbol)
+
+        for s in symbol:
+            res = requests.get(GetStockData.URL,
+                               params={
+                                   'function': 'TIME_SERIES_DAILY',
+                                   'symbol': s,
+                                   'outputsize': 'full',
+                                   'apikey': GetStockData.get_api_key()
+                               })
+            print(json.dumps(res.json(), indent=1))
 
     @staticmethod
     def get_real_time_price(symbols: List[str] = None):
         if symbols is None:
-            symbols = ['MSFT', 'FB', 'AAPL', 'GOOG']
+            # symbols = ['MSFT', 'FB', 'AAPL', 'GOOG']
+            return
+
         res = requests.get(GetStockData.URL,
                            params={
                                'function': 'BATCH_STOCK_QUOTES',
