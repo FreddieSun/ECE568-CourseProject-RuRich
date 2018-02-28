@@ -1,32 +1,48 @@
 # -*- coding:utf-8 -*-
-from sqlalchemy import Column, BIGINT, TEXT, NUMERIC
-from sqlalchemy.ext.declarative import declarative_base
+import os
+from typing import List
 
-Base = declarative_base()
-
-
-class RealTimePrice(Base):
-    __tablename__ = 'real_time'
-    time_stamp = Column(BIGINT, primary_key=True, nullable=True)
-    symbol = Column(TEXT, primary_key=True, nullable=True)
-    price = Column(NUMERIC(1000, 4), nullable=True)
-    volume = Column(BIGINT, nullable=True)
+from pymongo import MongoClient
 
 
+class Utils(object):
+    @staticmethod
+    def get_env(env: str) -> str:
+        api_key = os.getenv(env)
+        if api_key is None:
+            raise EnvironmentError
+        return api_key
 
 class DatabaseUtils(object):
-    pass
+    client = MongoClient('mongodb://{0}:{1}@{2}/'.format(Utils.get_env('MONGO_INITDB_ROOT_USERNAME'),
+                                                         Utils.get_env('MONGO_INITDB_ROOT_PASSWORD'),
+                                                         Utils.get_env('MONGO_HOST')))
+    db = client['ece568']
 
+    @classmethod
+    def save_daily_history(cls, insert_list: List):
+        col = cls.db['daily']
+        for doc in insert_list:
+            col.update_many(
+                {'timestamp': doc['timestamp'],
+                 'symbol': doc['symbol']},
+                {'$set': doc},
+                upsert=True
+            )
 
-
-
-class databaseUtil(object):
-
-    @staticmethod
-    def save_price(time_stamp, symbol, open_price, high_price, low_price, close_price, volume):
-        pass
+    @classmethod
+    def save_realtime(cls, insert_list: List):
+        col = cls.db['realtime']
+        for doc in insert_list:
+            col.update_many(
+                {'timestamp': doc['timestamp'],
+                 'symbol': doc['symbol']},
+                {'$set': doc},
+                upsert=True
+            )
 
 
 if __name__ == '__main__':
-    # databaseUtil.save_price()
-    pass
+    from get_stock_data import GetStockData
+
+    DatabaseUtils.save_daily_history(GetStockData.get_daily_data('GOOG'))

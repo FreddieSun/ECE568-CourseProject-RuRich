@@ -20,7 +20,7 @@ file_env() {
 
 
 file_env 'ALPHAVANTAG_API_KEY'
-file_env 'POSTGRES_PASSWORD'
+file_env 'MONGO_INITDB_ROOT_PASSWORD'
 
 if [ "${1:0:1}" = '-' ]; then
     exec python ./run_app.py "$@"

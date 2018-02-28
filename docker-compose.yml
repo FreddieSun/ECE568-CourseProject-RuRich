@@ -3,33 +3,41 @@ version: "3.5"
 services:
   get-stock-data:
     build: .
-    command: ["python", "./run_app.py", "GOOG", "FB"] # stock symbols
+    command: ["python", "./run_app.py", 'GOOG', 'AABA', 'FB', 'MSFT', 'TWTR', 'AAPL', 'JPM', 'AMZN', 'JNJ', 'BAC'] # stock symbols
     secrets:
       - alphavantag_api_key
-      - postgres_password
+      - mongo_initdb_root_password
     environment:
       ALPHAVANTAG_API_KEY_FILE: /run/secrets/alphavantag_api_key
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      MONGO_INITDB_ROOT_USERNAME: ece568
+      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/mongo_initdb_root_password
+      MONGO_HOST: "18.219.217.252"
+      MONGO_DBNAME: ece568
       PYTHONUNBUFFERED: "1"
     depends_on:
-      - postgres
+      - mongodb
 
-  postgres:
-    image: postgres
+  mongodb:
+    image: mongo
     secrets:
-      - postgres_password
+      - mongo_initdb_root_password
     environment:
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
-    volumes:
-      - "postgres-data:/var/lib/postgresql/data"
+      MONGO_INITDB_ROOT_USERNAME: ece568
+      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/mongo_initdb_root_password
     ports:
-      - "5432:5432"
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+      - mongdb-config:/data/configdb
+
+
 
 secrets:
   alphavantag_api_key:
-    file: ./alphavantag_api_key.txt
-  postgres_password:
-    file: ./postgres_password.txt
+    file: ./alphavantag_api_key
+  mongo_initdb_root_password:
+    file: ./mongo_initdb_root_password
 
 volumes:
-  postgres-data:
+  mongodb-data:
+  mongdb-config:
