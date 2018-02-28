@@ -31,6 +31,18 @@ services:
       - mongodb-data:/data/db
       - mongdb-config:/data/configdb
 
+  mongodb-express:
+    image: mongo-express
+    depends_on:
+      - mongodb
+    volumes:
+      - type: bind
+        source: ./mongo-express-config.js
+        target: /node_modules/mongo-express/config.js
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
 
 
 secrets:
