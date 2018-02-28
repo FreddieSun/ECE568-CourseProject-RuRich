@@ -2,7 +2,9 @@ version: "3.5"
 
 services:
   get-stock-data:
-    build: .
+    build:
+      context: ./get-stock-data
+      dockerfile: Dockerfile
     command: ["python", "./run_app.py", 'GOOG', 'AABA', 'FB', 'MSFT', 'TWTR', 'AAPL', 'JPM', 'AMZN', 'JNJ', 'BAC'] # stock symbols
     secrets:
       - alphavantag_api_key
@@ -11,8 +13,7 @@ services:
       ALPHAVANTAG_API_KEY_FILE: /run/secrets/alphavantag_api_key
       MONGO_INITDB_ROOT_USERNAME: ece568
       MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/mongo_initdb_root_password
-      MONGO_HOST: "18.219.217.252"
-      MONGO_DBNAME: ece568
+      MONGO_HOST: mongodb
       PYTHONUNBUFFERED: "1"
     depends_on:
       - mongodb

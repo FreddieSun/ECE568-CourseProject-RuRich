@@ -4,7 +4,6 @@ import argparse
 from typing import Union, List
 
 from apscheduler.schedulers.blocking import BlockingScheduler
-
 from database_utils import DatabaseUtils
 from get_stock_data import GetStockData
 from initdb import init_db
@@ -27,7 +26,7 @@ if __name__ == '__main__':
 
 
     scheduler = BlockingScheduler()
-    scheduler.add_job(updateRealtime, 'interval', seconds=5, args=[args.symbols, ])
+    scheduler.add_job(updateRealtime, 'interval', seconds=2, args=[args.symbols, ])
     scheduler.add_job(updateDaily, 'interval', days=1, args=[args.symbols, ])
     try:
         scheduler.start()
