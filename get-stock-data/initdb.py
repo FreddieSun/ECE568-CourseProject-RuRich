@@ -5,7 +5,7 @@ import arrow
 import requests
 from bson.decimal128 import Decimal128
 from bson.int64 import Int64
-from pymongo import MongoClient, DESCENDING, TEXT
+from pymongo import MongoClient, DESCENDING
 
 from utils import Utils
 
@@ -109,8 +109,10 @@ def init_db(symbols: Union[str, List[str]]):
         }
     }})
 
-    db['daily'].create_index([('timestamp', DESCENDING), ('symbol', TEXT)], unique=True, background=True)
-    db['realtime'].create_index([('timestamp', DESCENDING), ('symbol', TEXT)], unique=True, background=True)
+    db['daily'].create_index([('timestamp', DESCENDING), ('symbol', DESCENDING)], unique=True, background=True)
+    db['daily'].create_index([('symbol', DESCENDING), ('timestamp', DESCENDING)], unique=True, background=True)
+    db['realtime'].create_index([('timestamp', DESCENDING), ('symbol', DESCENDING)], unique=True, background=True)
+    db['realtime'].create_index([('symbol', DESCENDING), ('timestamp', DESCENDING)], unique=True, background=True)
 
     for stock in symbols:
         db['daily'].insert_many(get_daily_data(stock))
