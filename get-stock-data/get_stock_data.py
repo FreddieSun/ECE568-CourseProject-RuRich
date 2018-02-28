@@ -1,23 +1,18 @@
 # -*- coding:utf-8 -*-
 
-import os
 from typing import List, Union
 
 import arrow
 import requests
 from bson.decimal128 import Decimal128
+from bson.errors import BSONError
 from bson.int64 import Int64
+
+from utils import Utils
 
 
 class GetStockData(object):
     URL = 'https://www.alphavantage.co/query'
-
-    @staticmethod
-    def get_api_key() -> str:
-        api_key = os.getenv('ALPHAVANTAG_API_KEY')
-        if api_key is None:
-            raise EnvironmentError
-        return api_key
 
     @staticmethod
     def get_daily_data(symbols: Union[str, List[str]]):
@@ -27,29 +22,28 @@ class GetStockData(object):
         if isinstance(symbols, str):
             symbols = [symbols, ]
 
-        retList = []
+        ret_list = []
         for s in symbols:
             res = requests.get(GetStockData.URL,
                                params={
                                    'function': 'TIME_SERIES_DAILY',
-                                   'symbols': s,
+                                   'symbol': s,
                                    'outputsize': 'compact',  # full, compact
-                                   'apikey': GetStockData.get_api_key()
+                                   'apikey': Utils.get_env('ALPHAVANTAG_API_KEY')
                                })
 
             j = res.json()
             tz = j['Meta Data']['5. Time Zone']
             for d, info in j['Time Series (Daily)'].items():
-                tmpDict = {}
-                tmpDict['timestamp'] = arrow.get(d).replace(tzinfo=tz).datetime
-                tmpDict['symbols'] = s
-                tmpDict['open'] = Decimal128(info['1. open'])
-                tmpDict['high'] = Decimal128(info['2. high'])
-                tmpDict['low'] = Decimal128(info['3. low'])
-                tmpDict['close'] = Decimal128(info['4. close'])
-                tmpDict['volume'] = Int64(info['5. volume'])
-                retList.append(tmpDict)
-        return retList
+                tmp_dict = {'timestamp': arrow.get(d).replace(tzinfo=tz).datetime,
+                            'symbol': s,
+                            'open': Decimal128(info['1. open']),
+                            'high': Decimal128(info['2. high']),
+                            'low': Decimal128(info['3. low']),
+                            'close': Decimal128(info['4. close']),
+                            'volume': Int64(info['5. volume'])}
+                ret_list.append(tmp_dict)
+        return ret_list
 
     @staticmethod
     def get_real_time_price(symbols: Union[str, List[str]] = None):
@@ -62,24 +56,22 @@ class GetStockData(object):
                            params={
                                'function': 'BATCH_STOCK_QUOTES',
                                'symbols': ','.join(symbols),
-                               'apikey': GetStockData.get_api_key()
+                               'apikey': Utils.get_env('ALPHAVANTAG_API_KEY')
                            })
         j = res.json()
         tz = j['Meta Data']['3. Time Zone']
-        retList = []
+        ret_list = []
         for info in j['Stock Quotes']:
-            tmpDict = {}
-            tmpDict['timestamp'] = arrow.get(info['4. timestamp']).replace(tzinfo=tz).datetime
-            tmpDict['symbol'] = info['1. symbol']
-            tmpDict['price'] = Decimal128(info['2. price'])
+            tmp_dict = {'timestamp': arrow.get(info['4. timestamp']).replace(tzinfo=tz).datetime,
+                        'symbol': info['1. symbol'], 'price': Decimal128(info['2. price'])}
             try:
-                tmpDict['volume'] = Int64(info['3. volume'])
-            except:
-                tmpDict['volume'] = Int64(0)
-            retList.append(tmpDict)
+                tmp_dict['volume'] = Int64(info['3. volume'])
+            except BSONError:
+                tmp_dict['volume'] = Int64(0)
+            ret_list.append(tmp_dict)
 
-        return retList
+        return ret_list
 
 
 if __name__ == '__main__':
-    print(GetStockData.get_real_time_price('GOOG'))
+    print(GetStockData.get_daily_data('GOOG'))

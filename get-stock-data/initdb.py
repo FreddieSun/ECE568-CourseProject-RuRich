@@ -20,16 +20,16 @@ def get_daily_data(symbol: Union[str, List[str]]):
     if isinstance(symbol, str):
         symbol = [symbol, ]
 
-    URL = 'https://www.alphavantage.co/query'
+    url = 'https://www.alphavantage.co/query'
     if not symbol:
         raise ValueError
 
     if isinstance(symbol, str):
         symbol = [symbol, ]
 
-    retList = []
+    ret_list = []
     for s in symbol:
-        res = requests.get(URL,
+        res = requests.get(url,
                            params={
                                'function': 'TIME_SERIES_DAILY',
                                'symbol': s,
@@ -40,16 +40,15 @@ def get_daily_data(symbol: Union[str, List[str]]):
         j = res.json()
         tz = j['Meta Data']['5. Time Zone']
         for d, info in j['Time Series (Daily)'].items():
-            tmpDict = {}
-            tmpDict['timestamp'] = arrow.get(d).replace(tzinfo=tz).datetime
-            tmpDict['symbol'] = s
-            tmpDict['open'] = Decimal128(info['1. open'])
-            tmpDict['high'] = Decimal128(info['2. high'])
-            tmpDict['low'] = Decimal128(info['3. low'])
-            tmpDict['close'] = Decimal128(info['4. close'])
-            tmpDict['volume'] = Int64(info['5. volume'])
-            retList.append(tmpDict)
-    return retList
+            tmp_dict = {'timestamp': arrow.get(d).replace(tzinfo=tz).datetime,
+                        'symbol': s,
+                        'open': Decimal128(info['1. open']),
+                        'high': Decimal128(info['2. high']),
+                        'low': Decimal128(info['3. low']),
+                        'close': Decimal128(info['4. close']),
+                        'volume': Int64(info['5. volume'])}
+            ret_list.append(tmp_dict)
+    return ret_list
 
 
 def init_db(symbols: Union[str, List[str]]):

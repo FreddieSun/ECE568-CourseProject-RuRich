@@ -1,17 +1,11 @@
 # -*- coding:utf-8 -*-
-import os
+
 from typing import List
 
 from pymongo import MongoClient
 
+from utils import Utils
 
-class Utils(object):
-    @staticmethod
-    def get_env(env: str) -> str:
-        api_key = os.getenv(env)
-        if api_key is None:
-            raise EnvironmentError
-        return api_key
 
 class DatabaseUtils(object):
     client = MongoClient('mongodb://{0}:{1}@{2}/'.format(Utils.get_env('MONGO_INITDB_ROOT_USERNAME'),
