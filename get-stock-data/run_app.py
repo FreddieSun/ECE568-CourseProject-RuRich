@@ -27,7 +27,7 @@ if __name__ == '__main__':
     init_db(args.symbols)
 
     scheduler = BlockingScheduler()
-    scheduler.add_job(update_realtime, 'interval', seconds=1, args=[args.symbols, ])
+    scheduler.add_job(update_realtime, 'interval', seconds=2, args=[args.symbols, ])
     scheduler.add_job(update_daily, 'interval', days=1, args=[args.symbols, ])
     try:
         scheduler.start()

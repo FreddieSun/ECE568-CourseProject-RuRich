@@ -15,15 +15,15 @@ class GetStockData(object):
     URL = 'https://www.alphavantage.co/query'
 
     @staticmethod
-    def get_daily_data(symbols: Union[str, List[str]]):
-        if not symbols:
+    def get_daily_data(symbol: Union[str, List[str]]):
+        if not symbol:
             raise ValueError
 
-        if isinstance(symbols, str):
-            symbols = [symbols, ]
+        if isinstance(symbol, str):
+            symbol = [symbol, ]
 
         ret_list = []
-        for s in symbols:
+        for s in symbol:
             res = requests.get(GetStockData.URL,
                                params={
                                    'function': 'TIME_SERIES_DAILY',
@@ -46,16 +46,16 @@ class GetStockData(object):
         return ret_list
 
     @staticmethod
-    def get_real_time_price(symbols: Union[str, List[str]] = None):
-        if symbols is None:
+    def get_real_time_price(symbol: Union[str, List[str]] = None):
+        if symbol is None:
             return []
-        if isinstance(symbols, str):
-            symbols = [symbols, ]
+        if isinstance(symbol, str):
+            symbol = [symbol, ]
 
         res = requests.get(GetStockData.URL,
                            params={
                                'function': 'BATCH_STOCK_QUOTES',
-                               'symbols': ','.join(symbols),
+                               'symbols': ','.join(symbol),
                                'apikey': Utils.get_env('ALPHAVANTAG_API_KEY')
                            })
         j = res.json()
@@ -74,4 +74,4 @@ class GetStockData(object):
 
 
 if __name__ == '__main__':
-    print(GetStockData.get_daily_data('GOOG'))
+    print(GetStockData.get_real_time_price('GOOG'))

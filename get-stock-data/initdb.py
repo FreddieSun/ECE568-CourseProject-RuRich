@@ -1,5 +1,4 @@
 # -*- coding:utf-8 -*-
-import os
 from typing import Union, List
 
 import arrow
@@ -8,15 +7,13 @@ from bson.decimal128 import Decimal128
 from bson.int64 import Int64
 from pymongo import MongoClient, DESCENDING, TEXT
 
-
-def get_env(env: str) -> str:
-    api_key = os.getenv(env)
-    if api_key is None:
-        raise EnvironmentError
-    return api_key
+from utils import Utils
 
 
 def get_daily_data(symbol: Union[str, List[str]]):
+    if not symbol:
+        raise ValueError
+
     if isinstance(symbol, str):
         symbol = [symbol, ]
 
@@ -34,7 +31,7 @@ def get_daily_data(symbol: Union[str, List[str]]):
                                'function': 'TIME_SERIES_DAILY',
                                'symbol': s,
                                'outputsize': 'full',  # full, compact
-                               'apikey': get_env('ALPHAVANTAG_API_KEY')
+                               'apikey': Utils.get_env('ALPHAVANTAG_API_KEY')
                            })
 
         j = res.json()
@@ -53,8 +50,8 @@ def get_daily_data(symbol: Union[str, List[str]]):
 
 def init_db(symbols: Union[str, List[str]]):
     client = MongoClient(
-        'mongodb://{0}:{1}@{2}/'.format(get_env('MONGO_INITDB_ROOT_USERNAME'), get_env('MONGO_INITDB_ROOT_PASSWORD'),
-                                        get_env('MONGO_HOST')))
+        'mongodb://{0}:{1}@{2}/'.format(Utils.get_env('MONGO_INITDB_ROOT_USERNAME'),
+                                        Utils.get_env('MONGO_INITDB_ROOT_PASSWORD'), Utils.get_env('MONGO_HOST')))
     db = client['ece568']
 
     if db['flag'].find({'init': True}).count() != 0:
