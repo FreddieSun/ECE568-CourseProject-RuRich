@@ -1,5 +1,6 @@
 # -*- coding:utf-8 -*-
 
+import json
 from typing import List, Union
 
 import arrow
@@ -32,17 +33,21 @@ class GetStockData(object):
                                    'apikey': Utils.get_env('ALPHAVANTAG_API_KEY')
                                })
 
-            j = res.json()
-            tz = j['Meta Data']['5. Time Zone']
-            for d, info in j['Time Series (Daily)'].items():
-                tmp_dict = {'timestamp': arrow.get(d).replace(tzinfo=tz).datetime,
-                            'symbol': s,
-                            'open': Decimal128(info['1. open']),
-                            'high': Decimal128(info['2. high']),
-                            'low': Decimal128(info['3. low']),
-                            'close': Decimal128(info['4. close']),
-                            'volume': Int64(info['5. volume'])}
-                ret_list.append(tmp_dict)
+            j = res.json()  # type: dict
+            if 'Time Series (Daily)' in j:
+                tz = j['Meta Data']['5. Time Zone']
+                for d, info in j['Time Series (Daily)'].items():
+                    tmp_dict = {'timestamp': arrow.get(d).replace(tzinfo=tz).datetime,
+                                'symbol': s,
+                                'open': Decimal128(info['1. open']),
+                                'high': Decimal128(info['2. high']),
+                                'low': Decimal128(info['3. low']),
+                                'close': Decimal128(info['4. close']),
+                                'volume': Int64(info['5. volume'])}
+                    ret_list.append(tmp_dict)
+            else:
+                print(arrow.utcnow().isoformat())
+                print(json.dumps(j, indent=1))
         return ret_list
 
     @staticmethod
@@ -58,18 +63,22 @@ class GetStockData(object):
                                'symbols': ','.join(symbol),
                                'apikey': Utils.get_env('ALPHAVANTAG_API_KEY')
                            })
-        j = res.json()
-        tz = j['Meta Data']['3. Time Zone']
+        j = res.json()  #type: dict
         ret_list = []
-        for info in j['Stock Quotes']:
-            tmp_dict = {'timestamp': arrow.get(info['4. timestamp']).replace(tzinfo=tz).datetime,
-                        'symbol': info['1. symbol'], 'price': Decimal128(info['2. price'])}
-            try:
-                tmp_dict['volume'] = Int64(info['3. volume'])
-            except BSONError:
-                tmp_dict['volume'] = Int64(0)
-            ret_list.append(tmp_dict)
+        if 'Stock Quotes' in j:
+            tz = j['Meta Data']['3. Time Zone']
 
+            for info in j['Stock Quotes']:
+                tmp_dict = {'timestamp': arrow.get(info['4. timestamp']).replace(tzinfo=tz).datetime,
+                            'symbol': info['1. symbol'], 'price': Decimal128(info['2. price'])}
+                try:
+                    tmp_dict['volume'] = Int64(info['3. volume'])
+                except BSONError:
+                    tmp_dict['volume'] = Int64(0)
+                ret_list.append(tmp_dict)
+        else:
+            print(arrow.utcnow().isoformat())
+            print(json.dumps(j, indent=1))
         return ret_list
 
 
