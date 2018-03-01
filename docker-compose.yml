@@ -29,7 +29,7 @@ services:
       - "27017:27017"
     volumes:
       - mongodb-data:/data/db
-      - mongdb-config:/data/configdb
+      - mongodb-config:/data/configdb
 
   mongodb-express:
     image: mongo-express
@@ -53,4 +53,4 @@ secrets:
 
 volumes:
   mongodb-data:
-  mongdb-config:
+  mongodb-config:

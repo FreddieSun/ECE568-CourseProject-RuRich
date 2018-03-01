@@ -28,7 +28,7 @@ if __name__ == '__main__':
 
     scheduler = BlockingScheduler()
     scheduler.add_job(update_realtime, 'interval', seconds=2, args=[args.symbols, ])
-    scheduler.add_job(update_daily, 'interval', days=1, args=[args.symbols, ])
+    scheduler.add_job(update_daily, 'interval', hours=1, args=[args.symbols, ])
     try:
         scheduler.start()
     except SystemExit:
