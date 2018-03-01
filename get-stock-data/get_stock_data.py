@@ -42,8 +42,11 @@ class GetStockData(object):
                                 'open': Decimal128(info['1. open']),
                                 'high': Decimal128(info['2. high']),
                                 'low': Decimal128(info['3. low']),
-                                'close': Decimal128(info['4. close']),
-                                'volume': Int64(info['5. volume'])}
+                                'close': Decimal128(info['4. close'])}
+                    try:
+                        tmp_dict['volume'] = Int64(info['5. volume'])
+                    except (BSONError, ValueError):
+                        tmp_dict['volume'] = Int64(0)
                     ret_list.append(tmp_dict)
             else:
                 print(arrow.utcnow().isoformat())
@@ -70,10 +73,11 @@ class GetStockData(object):
 
             for info in j['Stock Quotes']:
                 tmp_dict = {'timestamp': arrow.get(info['4. timestamp']).replace(tzinfo=tz).datetime,
-                            'symbol': info['1. symbol'], 'price': Decimal128(info['2. price'])}
+                            'symbol': info['1. symbol'],
+                            'price': Decimal128(info['2. price'])}
                 try:
                     tmp_dict['volume'] = Int64(info['3. volume'])
-                except BSONError:
+                except (BSONError, ValueError):
                     tmp_dict['volume'] = Int64(0)
                 ret_list.append(tmp_dict)
         else:
