@@ -3,6 +3,8 @@
 
 # Plus Python.gitignore https://github.com/github/gitignore/blob/master/Python.gitignore
 
+priceGetter/apikey
+
 # User-specific stuff:
 .idea/**/workspace.xml
 .idea/**/tasks.xml
