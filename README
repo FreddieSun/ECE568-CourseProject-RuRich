@@ -5,6 +5,7 @@ an OS that can run docker-ce and docker-compose on it
 2GiB+ free space in storage
 enough RAM and swap space
 Internet access
+port 27017, 8081 are available
 
 ---- the project is developed under ----
 - OS :
@@ -77,5 +78,10 @@ run the command to start the application under the root dir of project with enou
 foreground : docker-compose up --build
 Detached mode : docker-compose up --build -d
 
-8. to stop the detached mode application
+8. access to the database
+open yourcomputer:8081 in browser
+the address may localhost:8081 yourIP:8081 yourcomputername:8081 domainname:8081 etc.
+it depends on your network and your ISP and how you running the application (local or in remote server)
+
+9. to stop the detached mode application
 docker-compose down
