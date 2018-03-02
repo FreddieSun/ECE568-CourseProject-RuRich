@@ -2,7 +2,7 @@
 
 from typing import List
 
-from pymongo import MongoClient
+from pymongo import MongoClient, DESCENDING
 
 from utils import Utils
 
@@ -35,6 +35,23 @@ class DatabaseUtils(object):
                 upsert=True
             )
 
+    @classmethod
+    def get_daily_history_symbols(cls):
+        return [ele['_id'] for ele in cls.db['daily'].aggregate([{'$group': {'_id': '$symbol'}}, ])]
+
+    @classmethod
+    def get_daily_history_by_symbol(cls, symbol: str):
+        return list(
+            cls.db['daily'].find(filter={'symbol': symbol}, projection={'_id': 0}, sort=[('timestamp', DESCENDING)]))
+
+    @classmethod
+    def get_realtime_symbols(cls):
+        return [ele['_id'] for ele in cls.db['realtime'].aggregate([{'$group': {'_id': '$symbol'}}, ])]
+
+    @classmethod
+    def get_realtime_by_symbol(cls, symbol: str):
+        return list(
+            cls.db['realtime'].find(filter={'symbol': symbol}, projection={'_id': 0}, sort=[('timestamp', DESCENDING)]))
 
 if __name__ == '__main__':
     from get_stock_data import GetStockData
