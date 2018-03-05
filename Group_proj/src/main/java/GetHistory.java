@@ -1,18 +1,16 @@
 import org.patriques.AlphaVantageConnector;
 import org.patriques.TimeSeries;
-import org.patriques.input.timeseries.Interval;
 import org.patriques.input.timeseries.OutputSize;
-import org.patriques.output.AlphaVantageException;
 import org.patriques.output.timeseries.Daily;
-import org.patriques.output.timeseries.IntraDay;
 import org.patriques.output.timeseries.data.StockData;
-import org.patriques.*;
 
-import java.util.List;
-import java.util.Map;
 import java.sql.*;
+import java.util.*;
+import java.util.Date;
 
-public class GetHistoricalStock {
+public class GetHistory {
+
+    private String[] stockList = {"FB"};
     // param for JDBC
     static final String JDBC_DRIVER="com.mysql.jdbc.Driver";
     static final String DB_URL="jdbc:mysql://localhost:3306/ECE568";
@@ -21,11 +19,13 @@ public class GetHistoricalStock {
     // username and the passname for the databse
     static final String USER="root";
     static final String PASS="";
+    static final String apiKey = "DBIUONIEQZL8SQKS";
+    static final int timeout = 3000;
+    Timer timer;
 
 
-    public static void main(String[] args) throws ClassNotFoundException, SQLException {
-        String apiKey = "DBIUONIEQZL8SQKS";
-        int timeout = 3000;
+    public GetHistory() {
+
         AlphaVantageConnector apiConnector = new AlphaVantageConnector(apiKey, timeout);
         TimeSeries stockTimeSeries = new TimeSeries(apiConnector);
 
@@ -33,17 +33,25 @@ public class GetHistoricalStock {
         Statement stmt = null;
         System.out.println("Please ");
         // 注册 JDBC 驱动
-        Class.forName("com.mysql.jdbc.Driver");
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
         // 打开链接
         System.out.println("连接数据库...");
-        conn = DriverManager.getConnection(DB_URL,USER,PASS);
-        // 清空数据库
-        PreparedStatement deleteStatement;
-        deleteStatement = conn.prepareStatement("DELETE FROM HistoricalData");
-        deleteStatement.execute();
+        try {
+            conn = DriverManager.getConnection(DB_URL,USER,PASS);
 
-        String[] stockList = {"FB","APPL","AMZN","MSFT","GOOG","NOK","IBM","ORCL","INTC","AMD"};
+            // 清空数据库
+            PreparedStatement deleteStatement = null;
+            deleteStatement = conn.prepareStatement("DELETE FROM HistoricalData");
+            deleteStatement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
 
         for (int i = 0; i <stockList.length; i++) {
             try{
@@ -55,7 +63,7 @@ public class GetHistoricalStock {
 
                 //调用API获取数据
                 //IntraDay response = stockTimeSeries.intraDay("MSFT", Interval.ONE_MIN, OutputSize.COMPACT);
-                Daily response = stockTimeSeries.daily(stockSymbol,OutputSize.COMPACT);
+                Daily response = stockTimeSeries.daily(stockSymbol, OutputSize.COMPACT);
                 Map<String, String> metaData = response.getMetaData();
                 System.out.println("Symbol" + stockSymbol);
                 System.out.println("Information: " + metaData.get("1. Information"));
@@ -64,13 +72,6 @@ public class GetHistoricalStock {
                 List<StockData> stockData = response.getStockData();
 
                 stockData.forEach(stock -> {
-                    System.out.println("date:   " + stock.getDateTime());
-                    System.out.println("open:   " + stock.getOpen());
-                    System.out.println("high:   " + stock.getHigh());
-                    System.out.println("low:    " + stock.getLow());
-                    System.out.println("close:  " + stock.getClose());
-                    System.out.println("volume: " + stock.getVolume());
-
                     // 开始写入
                     try {
                         psql.setString(1,stockSymbol);
@@ -85,13 +86,7 @@ public class GetHistoricalStock {
                         e.printStackTrace();
                     }
                     //写入成功
-
-
-
                 });
-
-
-
             }catch(SQLException se){
                 // 处理 JDBC 错误
                 se.printStackTrace();
@@ -100,7 +95,11 @@ public class GetHistoricalStock {
                 e.printStackTrace();
             }
         }
-        conn.close();
-
+        try {
+            conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
+
 }
