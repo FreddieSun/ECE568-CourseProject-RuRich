@@ -1,0 +1,11 @@
+version: "3.6"
+
+services:
+  prediction:
+    build:
+      context: ./prediction
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+
+
