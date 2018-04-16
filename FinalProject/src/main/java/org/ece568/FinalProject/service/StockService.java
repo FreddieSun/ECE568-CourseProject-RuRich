@@ -9,23 +9,13 @@ import org.ece568.FinalProject.model.*;
 
 public class StockService {
 	DBUtil dbUtil = new DBUtil();
+	
 	/*
 	 * 4.1 1. Show the list of all companies in the database 
 	 * along with their latest stock price (real time latest stock price)
 	 */
 
 	public List<RealTimeStock> getAllStock() {
-//		BigDecimal price1 = new BigDecimal("26.00");
-//		BigDecimal price2 = new BigDecimal("26.01");
-//
-//		RealTimeStock stock1 = new RealTimeStock("Google", "2018-04-16T01:22:43.091503+00:00 ", 12, price1);
-//		RealTimeStock stock2 = new RealTimeStock("Apple", "2018-04-16T01:22:44.091503+00:00 ", 13, price2);
-
-//		List<RealTimeStock> list = new ArrayList<>();
-//		list.add(stock1);
-//		list.add(stock2);
-		
-//		
 		return dbUtil.getAllStock();
 	}
 	
