@@ -1,5 +1,6 @@
 from typing import List
 
+import arrow
 from werkzeug.datastructures import ImmutableMultiDict
 
 
@@ -17,6 +18,7 @@ def checkParameters(
     if missing_parameter:
         return {
             'type': 'error',
+            'time': arrow.utcnow().isoformat(),
             'error': {
                 'errorCode': 100,
                 'errorInfo': 'Missing parameters',
@@ -31,6 +33,7 @@ def checkParameters(
     if invalid_parameter:
         return {
             'type': 'error',
+            'time': arrow.utcnow().isoformat(),
             'error': {
                 'errorCode': 101,
                 'errorInfo': 'Invalid parameter value',
