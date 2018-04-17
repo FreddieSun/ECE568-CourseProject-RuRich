@@ -18,6 +18,3 @@ class Bayes(object):
 
         return pipe.predict(x)
 
-
-if __name__ == '__main__':
-    Bayes.predict()
