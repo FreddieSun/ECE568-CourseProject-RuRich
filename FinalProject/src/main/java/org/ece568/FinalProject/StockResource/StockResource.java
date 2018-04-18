@@ -33,5 +33,11 @@ public class StockResource {
     		return stockService.getDataForFigure(symbol);
     }
     
-	
+    @GET
+    @Path("/test/{test}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDay(@PathParam("test") String test) {
+    		return stockService.getDay(test);
+    }
+    
 }

@@ -62,4 +62,8 @@ public class StockService {
 		return dbUtil.getDataForFigure(symbol);
 		
 	}
+	
+	public Response getDay(String symbol) {
+		return dbUtil.getDay(symbol);
+	}
 }

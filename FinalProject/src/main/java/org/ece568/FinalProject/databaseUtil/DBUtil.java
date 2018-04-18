@@ -100,17 +100,46 @@ public class DBUtil {
        					           min("min", "$low")         
        					      )
     					   )
-	).forEach(addToList);;
-	
-//        double maxPrice = Integer.MIN_VALUE;
-//        for(Document docObj: output) {
-//        		double tempPrice = Double.valueOf(docObj.get("max").toString());
-//        		maxPrice = Math.max(tempPrice, maxPrice);
-//        }
-//        mainObj.put("max", maxPrice);
-//        
-    	
+	).forEach(addToList);
         
+		return Response.status(200).entity(mainObj.toString()).build();
+	}
+	
+	
+	public Response getDay(String symbol) {
+		JSONObject mainObj = new JSONObject();
+		
+		JSONObject dataObj = new JSONObject();
+		List<String> dateList = new ArrayList();
+		dateList.add("4/7/2018");
+		dateList.add("4/8/2018");
+		dateList.add("4/9/2018");
+		dateList.add("4/10/2018");
+		dateList.add("4/11/2018");
+		List<String> priceList = new ArrayList();
+
+		priceList.add("123");
+		priceList.add("124");
+		priceList.add("125");
+		priceList.add("126");
+		priceList.add("127");
+
+		List<String> volumeList = new ArrayList();
+
+		volumeList.add("123");
+		volumeList.add("124");
+		volumeList.add("125");
+		volumeList.add("126");
+		volumeList.add("127");
+
+		
+		dataObj.put("time", dateList);
+		dataObj.put("price", priceList);
+		dataObj.put("volume", volumeList);
+		
+		mainObj.put("data", dataObj);
+		mainObj.put("symbol", symbol);
+		
 		return Response.status(200).entity(mainObj.toString()).build();
 	}
 }
