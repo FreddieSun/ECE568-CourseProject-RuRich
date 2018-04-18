@@ -4,8 +4,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
 import org.ece568.FinalProject.databaseUtil.DBUtil;
 import org.ece568.FinalProject.model.*;
+import org.json.JSONObject;
 
 public class StockService {
 	DBUtil dbUtil = new DBUtil();
@@ -53,5 +56,9 @@ public class StockService {
 	public List<Integer> getAllSpecificStockId() {
 		List<Integer> list = new ArrayList<>();
 		return list;
+	}
+	
+	public Response getDataForFigure(String symbol) {
+		return dbUtil.getDataForFigure(symbol);
 	}
 }
