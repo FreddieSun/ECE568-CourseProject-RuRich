@@ -60,5 +60,6 @@ public class StockService {
 	
 	public Response getDataForFigure(String symbol) {
 		return dbUtil.getDataForFigure(symbol);
+		
 	}
 }

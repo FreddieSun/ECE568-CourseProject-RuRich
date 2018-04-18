@@ -28,7 +28,6 @@ import org.bson.Document;
 
 public class DBUtil {
 	public final String[] STOCK_LIST = {"GOOG", "AABA", "FB", "MSFT", "TWTR", "AAPL", "JPM", "AMZN", "JNJ", "BNC"};
-    public static final String URL = "mongodb://ece568:ece568project@zwithc.cn:27017";
 
 	/*
 	 * 4.1 1. Show the list of all companies in the database 
