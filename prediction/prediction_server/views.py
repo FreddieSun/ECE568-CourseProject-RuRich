@@ -5,12 +5,54 @@ from flask import request, jsonify
 
 from prediction_server import app
 from prediction_server.jsonp import jsonp
-from prediction_server.models import checkParameters
+from prediction_server.models import checkParameters, getDailyData, checkSymbol, getRealtimeData
 
 
 @app.route('/')
 def index_page():
     return 'hello, world!'
+
+
+@app.route('/api/v0.0.1/test/daily')
+def daily_data():
+    check_result = checkParameters(
+        args=request.args,
+        parametersList=['symbol', ],
+        parameterType={
+            'symbol': [str, ]
+        }
+    )
+    if check_result:
+        return jsonify(check_result)
+
+    check_result = checkSymbol(request.args['symbol'])
+    if check_result:
+        return jsonify(check_result)
+
+    return jsonify(getDailyData(request.args['symbol']))
+
+
+@app.route('/api/v0.0.1/test/realtime')
+def realtime_data():
+    check_result = checkParameters(
+        args=request.args,
+        parametersList=['symbol', ],
+        parameterType={
+            'symbol': [str, ]
+        }
+    )
+    if check_result:
+        return jsonify(check_result)
+
+    check_result = checkSymbol(request.args['symbol'])
+    if check_result:
+        return jsonify(check_result)
+
+    return jsonify(getRealtimeData(request.args['symbol']))
+
+
+
+
 
 
 @app.route('/api/v0.1.0/vr')
@@ -24,6 +66,10 @@ def indicator():
             'symbol': [str, ]
         }
     )
+    if check_result:
+        return jsonify(check_result)
+
+    check_result = checkSymbol(request.args['symbol'])
     if check_result:
         return jsonify(check_result)
 
@@ -73,6 +119,10 @@ def predict():
             'term': ['short', 'long']
         })
 
+    if check_result:
+        return jsonify(check_result)
+
+    check_result = checkSymbol(request.args['symbol'])
     if check_result:
         return jsonify(check_result)
 
