@@ -2,18 +2,23 @@ package org.ece568.FinalProject.databaseUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
 
 import org.ece568.FinalProject.model.RealTimeStock;
+import org.eclipse.persistence.internal.libraries.asm.commons.StaticInitMerger;
 import org.json.JSONObject;
 
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import static com.mongodb.client.model.Accumulators.*;
 import static com.mongodb.client.model.Aggregates.*;
@@ -138,7 +143,7 @@ public class DBUtil {
 	// 返回三种特殊值， min max avg
 	public Response getMin(final String symbol) {
 		final JSONObject mainObj = new JSONObject();
-		MongoClient mongoClient = new MongoClient(new MongoClientURI(URL));
+		MongoClient mongoClient = new MongoClient(new MongoClientURI(URL));		
 
         // connecting to mongodb
         MongoDatabase mongoDatabase = mongoClient.getDatabase("ece568");
@@ -168,6 +173,7 @@ public class DBUtil {
     					   )
 	).forEach(addToList);
         
+
 		return Response.status(200).entity(mainObj.toString()).build();
 	}
 	
@@ -193,11 +199,30 @@ public class DBUtil {
 		    		priceList.add(document.get("price").toString());
 		    		volumeList.add(document.get("volume").toString());
 	        }
-        };
+        };        
         
-        collection.find(
+        MongoCursor<Document> output = collection.find(
         		and(eq("symbol",symbol),gte("timestamp", new Date((new Date().getTime() - (24 * 60 * 60 * 1000)))))
-        		).sort(Sorts.descending("timestamp")).forEach(addToList);
+        		).sort(Sorts.descending("timestamp")).limit(9000).iterator();
+        
+		mainObj.put("symbol", symbol);
+
+        
+        int i = 0;
+        while(output.hasNext()) {
+        		i++;
+        		Document temp = output.next();
+        		if(i % 150 == 0) {
+		    		timeList.add(temp.get("timestamp").toString());
+		    		priceList.add(temp.get("price").toString());
+		    		volumeList.add(temp.get("volume").toString());
+        		}
+        }
+        
+        
+        Collections.reverse(timeList);
+        Collections.reverse(priceList);
+        Collections.reverse(volumeList);
         
         dataObj.put("time", timeList);
         dataObj.put("price", priceList);
@@ -205,6 +230,8 @@ public class DBUtil {
         mainObj.put("data", dataObj);
 		return Response.status(200).entity(mainObj.toString()).build();
 	}
+	
+	
 	
 	public Response getMonth(final String symbol) {
 		final JSONObject mainObj = new JSONObject();
@@ -233,6 +260,10 @@ public class DBUtil {
         collection.find(
         		eq("symbol",symbol)
         		).sort(Sorts.descending("timestamp")).limit(23).forEach(addToList);
+        
+        Collections.reverse(timeList);
+        Collections.reverse(priceList);
+        Collections.reverse(volumeList);
         
         dataObj.put("time", timeList);
         dataObj.put("price", priceList);
@@ -266,9 +297,25 @@ public class DBUtil {
 	        }
         };
         
-        collection.find(
+        MongoCursor<Document> output = collection.find(
         		eq("symbol",symbol)
-        		).sort(Sorts.descending("timestamp")).limit(252).forEach(addToList);
+        		).sort(Sorts.descending("timestamp")).limit(252).iterator();
+        
+        
+        int i = 0;
+        while(output.hasNext()) {
+        		i++;
+        		Document temp = output.next();
+        		if(i % 7 == 0) {
+		    		timeList.add(temp.get("timestamp").toString());
+		    		priceList.add(temp.get("close").toString());
+		    		volumeList.add(temp.get("volume").toString());
+        		}
+        }
+        
+        Collections.reverse(timeList);
+        Collections.reverse(priceList);
+        Collections.reverse(volumeList);
         
         dataObj.put("time", timeList);
         dataObj.put("price", priceList);
