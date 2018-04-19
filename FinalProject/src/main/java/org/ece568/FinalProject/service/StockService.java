@@ -22,31 +22,30 @@ public class StockService {
 		return dbUtil.getAllStock();
 	}
 	
-	
 	/*
 	 * 4.2 Get the highest stock price of any company in the last ten days
 	 * 
 	 */
-	public BigDecimal getHighestPrice(String symbol) {
-		BigDecimal res = new BigDecimal("");
-		return res;
+	public Response getMax(String symbol) {
+		return dbUtil.getMax(symbol);
+		
 	}
 	
 	/*
 	 * 4.3 Average stock price of any company in the latest one year.
 	 */
-	public BigDecimal getAvgPrice(String symbol) {
-		BigDecimal res = new BigDecimal("");
-		return res;
+	public Response getAvg(String symbol) {
+		return dbUtil.getAvg(symbol);
+		
 	}
-	
 	/*
 	 * 4.4 Lowest stock price for any company in the latest one year.
 	 */
-	public BigDecimal getLowestPrice(String symbol) {
-		BigDecimal res = new BigDecimal("");
-		return res;
+	public Response getMin(String symbol) {
+		return dbUtil.getMin(symbol);
+		
 	}
+	
 	
 	/*
 	 * 4.5 List the ids of companies along with their name who have the average stock price 
@@ -58,12 +57,19 @@ public class StockService {
 		return list;
 	}
 	
-	public Response getDataForFigure(String symbol) {
-		return dbUtil.getDataForFigure(symbol);
-		
-	}
+
 	
 	public Response getDay(String symbol) {
 		return dbUtil.getDay(symbol);
 	}
+	
+	public Response getMonth(String symbol) {
+		return dbUtil.getMonth(symbol);
+	}
+	
+	public Response getYear(String symbol) {
+		return dbUtil.getYear(symbol);
+	}
+	
+
 }

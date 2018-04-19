@@ -2,8 +2,8 @@ package org.ece568.FinalProject.databaseUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.regex.Matcher;
 
 import javax.ws.rs.core.Response;
 
@@ -13,7 +13,6 @@ import org.json.JSONObject;
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import static com.mongodb.client.model.Accumulators.*;
@@ -22,13 +21,13 @@ import static com.mongodb.client.model.Filters.*;
 import com.mongodb.client.model.Sorts;
 import static java.util.Arrays.asList;
 
-import org.apache.jasper.tagplugins.jstl.core.ForEach;
 import org.bson.Document;
 
 
 public class DBUtil {
-	public final String[] STOCK_LIST = {"GOOG", "AABA", "FB", "MSFT", "TWTR", "AAPL", "JPM", "AMZN", "JNJ", "BNC"};
-
+	public final String[] STOCK_LIST = {"GOOG", "AABA", "FB", "MSFT", "TWTR", "AAPL", "JPM", "AMZN", "JNJ", "BAC"};
+	public static final String URL = "mongodb://ece568:ece568project@zwithc.cn:27017";
+	
 	/*
 	 * 4.1 1. Show the list of all companies in the database 
 	 * along with their latest stock price (real time latest stock price)
@@ -66,7 +65,8 @@ public class DBUtil {
 	}
 	
 	
-	public Response getDataForFigure(final String symbol) {
+	// 返回三种特殊值， min max avg
+	public Response getAvg(final String symbol) {
 		final JSONObject mainObj = new JSONObject();
 		MongoClient mongoClient = new MongoClient(new MongoClientURI(URL));
 
@@ -80,10 +80,7 @@ public class DBUtil {
 		    		mainObj.put("symbol", symbol);
 		    		
 		    		JSONObject valueObj = new JSONObject();
-		    		valueObj.put("max", document.get("max"));
 		    		valueObj.put("avg", document.get("avg"));
-		    		valueObj.put("low", document.get("min"));
-		    		
 		    		mainObj.put("value", valueObj);
 	        }
         };
@@ -95,8 +92,77 @@ public class DBUtil {
     					      new Document("$limit", 10),
     					      group(
        					           "_id:0",
-       					           avg("avg", "$close"),
-       					           max("max", "$high"),
+       					           avg("avg", "$close")   
+       					      )
+    					   )
+	).forEach(addToList);
+        
+		return Response.status(200).entity(mainObj.toString()).build();
+	}
+	
+	// 返回三种特殊值， min max avg
+	public Response getMax(final String symbol) {
+		final JSONObject mainObj = new JSONObject();
+		MongoClient mongoClient = new MongoClient(new MongoClientURI(URL));
+
+        // connecting to mongodb
+        MongoDatabase mongoDatabase = mongoClient.getDatabase("ece568");
+        MongoCollection<Document> collection = mongoDatabase.getCollection("daily");
+        
+        Block<Document> addToList = new Block<Document>() {
+	        @Override
+	        public void apply(final Document document) {
+		    		mainObj.put("symbol", symbol);
+		    		
+		    		JSONObject valueObj = new JSONObject();
+		    		valueObj.put("max", document.get("max"));		    		
+		    		mainObj.put("value", valueObj);
+	        }
+        };
+        
+        collection.aggregate(
+    				asList(
+    				          new Document("$match", new Document("symbol", symbol)),
+    					      new Document("$sort", new Document("timestamp", -1)),
+    					      new Document("$limit", 252),
+    					      group(
+       					           "_id:0",
+       					           max("max", "$high")
+       					      )
+    					   )
+	).forEach(addToList);
+        
+		return Response.status(200).entity(mainObj.toString()).build();
+	}
+	
+	// 返回三种特殊值， min max avg
+	public Response getMin(final String symbol) {
+		final JSONObject mainObj = new JSONObject();
+		MongoClient mongoClient = new MongoClient(new MongoClientURI(URL));
+
+        // connecting to mongodb
+        MongoDatabase mongoDatabase = mongoClient.getDatabase("ece568");
+        MongoCollection<Document> collection = mongoDatabase.getCollection("daily");
+        
+        Block<Document> addToList = new Block<Document>() {
+	        @Override
+	        public void apply(final Document document) {
+		    		mainObj.put("symbol", symbol);
+		    		
+		    		JSONObject valueObj = new JSONObject();
+		    		valueObj.put("low", document.get("min"));
+		    		
+		    		mainObj.put("value", valueObj);
+	        }
+        };
+        
+        collection.aggregate(
+    				asList(
+    				          new Document("$match", new Document("symbol", symbol)),
+    					      new Document("$sort", new Document("timestamp", -1)),
+    					      new Document("$limit", 252),
+    					      group(
+       					           "_id:0",
        					           min("min", "$low")         
        					      )
     					   )
@@ -105,41 +171,110 @@ public class DBUtil {
 		return Response.status(200).entity(mainObj.toString()).build();
 	}
 	
-	
-	public Response getDay(String symbol) {
-		JSONObject mainObj = new JSONObject();
-		
-		JSONObject dataObj = new JSONObject();
-		List<String> dateList = new ArrayList();
-		dateList.add("4/7/2018");
-		dateList.add("4/8/2018");
-		dateList.add("4/9/2018");
-		dateList.add("4/10/2018");
-		dateList.add("4/11/2018");
-		List<String> priceList = new ArrayList();
+	public Response getDay(final String symbol) {
+		final JSONObject mainObj = new JSONObject();
+		MongoClient mongoClient = new MongoClient(new MongoClientURI(URL));
 
-		priceList.add("123");
-		priceList.add("124");
-		priceList.add("125");
-		priceList.add("126");
-		priceList.add("127");
+        // connecting to mongodb
+        MongoDatabase mongoDatabase = mongoClient.getDatabase("ece568");
+        MongoCollection<Document> collection = mongoDatabase.getCollection("realtime");
 
-		List<String> volumeList = new ArrayList();
-
-		volumeList.add("123");
-		volumeList.add("124");
-		volumeList.add("125");
-		volumeList.add("126");
-		volumeList.add("127");
-
-		
-		dataObj.put("time", dateList);
-		dataObj.put("price", priceList);
-		dataObj.put("volume", volumeList);
-		
-		mainObj.put("data", dataObj);
-		mainObj.put("symbol", symbol);
-		
+        final List<String> timeList = new ArrayList<>();
+        final List<String> priceList = new ArrayList<>();
+        final List<String> volumeList = new ArrayList<>();
+        
+        JSONObject dataObj = new JSONObject();
+        Block<Document> addToList = new Block<Document>() {
+	        @Override
+	        public void apply(final Document document) {
+		    		mainObj.put("symbol", symbol);
+		    		
+		    		timeList.add(document.get("timestamp").toString());
+		    		priceList.add(document.get("price").toString());
+		    		volumeList.add(document.get("volume").toString());
+	        }
+        };
+        
+        collection.find(
+        		and(eq("symbol",symbol),gte("timestamp", new Date((new Date().getTime() - (24 * 60 * 60 * 1000)))))
+        		).sort(Sorts.descending("timestamp")).forEach(addToList);
+        
+        dataObj.put("time", timeList);
+        dataObj.put("price", priceList);
+        dataObj.put("volume", volumeList);
+        mainObj.put("data", dataObj);
 		return Response.status(200).entity(mainObj.toString()).build();
 	}
+	
+	public Response getMonth(final String symbol) {
+		final JSONObject mainObj = new JSONObject();
+		MongoClient mongoClient = new MongoClient(new MongoClientURI(URL));
+
+        // connecting to mongodb
+        MongoDatabase mongoDatabase = mongoClient.getDatabase("ece568");
+        MongoCollection<Document> collection = mongoDatabase.getCollection("daily");
+
+        final List<String> timeList = new ArrayList<>();
+        final List<String> priceList = new ArrayList<>();
+        final List<String> volumeList = new ArrayList<>();
+        
+        JSONObject dataObj = new JSONObject();
+        Block<Document> addToList = new Block<Document>() {
+	        @Override
+	        public void apply(final Document document) {
+		    		mainObj.put("symbol", symbol);
+		    		
+		    		timeList.add(document.get("timestamp").toString());
+		    		priceList.add(document.get("close").toString());
+		    		volumeList.add(document.get("volume").toString());
+	        }
+        };
+        
+        collection.find(
+        		eq("symbol",symbol)
+        		).sort(Sorts.descending("timestamp")).limit(23).forEach(addToList);
+        
+        dataObj.put("time", timeList);
+        dataObj.put("price", priceList);
+        dataObj.put("volume", volumeList);
+        mainObj.put("data", dataObj);
+		return Response.status(200).entity(mainObj.toString()).build();
+	}
+	
+
+	public Response getYear(final String symbol) {
+		final JSONObject mainObj = new JSONObject();
+		MongoClient mongoClient = new MongoClient(new MongoClientURI(URL));
+
+        // connecting to mongodb
+        MongoDatabase mongoDatabase = mongoClient.getDatabase("ece568");
+        MongoCollection<Document> collection = mongoDatabase.getCollection("daily");
+
+        final List<String> timeList = new ArrayList<>();
+        final List<String> priceList = new ArrayList<>();
+        final List<String> volumeList = new ArrayList<>();
+        
+        JSONObject dataObj = new JSONObject();
+        Block<Document> addToList = new Block<Document>() {
+	        @Override
+	        public void apply(final Document document) {
+		    		mainObj.put("symbol", symbol);
+		    		
+		    		timeList.add(document.get("timestamp").toString());
+		    		priceList.add(document.get("close").toString());
+		    		volumeList.add(document.get("volume").toString());
+	        }
+        };
+        
+        collection.find(
+        		eq("symbol",symbol)
+        		).sort(Sorts.descending("timestamp")).limit(252).forEach(addToList);
+        
+        dataObj.put("time", timeList);
+        dataObj.put("price", priceList);
+        dataObj.put("volume", volumeList);
+        mainObj.put("data", dataObj);
+		return Response.status(200).entity(mainObj.toString()).build();
+	}
+
 }
