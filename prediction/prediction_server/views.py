@@ -1,14 +1,14 @@
-import random
-
 import arrow
 import numpy as np
 from flask import request, jsonify
 
 from prediction_engine.bayes import Bayes
 from prediction_engine.svr_zhu import SupportVectorRegression
+from prediction_engine.vr import VolatilityRatio
 from prediction_server import app
 from prediction_server.jsonp import jsonp
-from prediction_server.models import checkParameters, getDailyData, checkSymbol, getRealtimeData
+from prediction_server.models import checkParameters, getDailyData, \
+    checkSymbol, getRealtimeData, checkDate, checkTimestamp
 
 
 @app.route('/')
@@ -29,7 +29,7 @@ def daily_data():
     if check_result:
         return jsonify(check_result)
 
-    return jsonify(getDailyData(request.args['symbol']))
+    return jsonify(getDailyData(request.args['symbol'], request.args.get('timestamp', None)))
 
 
 @app.route('/api/v0.0.1/test/realtime')
@@ -48,10 +48,6 @@ def realtime_data():
     return jsonify(getRealtimeData(request.args['symbol']))
 
 
-
-
-
-
 @app.route('/api/v0.1.0/vr')
 @jsonp
 def indicator():
@@ -66,22 +62,20 @@ def indicator():
     if check_result:
         return jsonify(check_result)
 
+    check_result = checkTimestamp(request.args['timestamp'])
+    if check_result:
+        return jsonify(check_result)
+
+    check_result = checkDate(request.args['symbol'], request.args['timestamp'])
+    if check_result:
+        return jsonify(check_result)
+
     # timestamp = arrow.get(request.args.get('timestamp', 0))
     # data_list = []
 
-    # TODO
+    period = int(request.args.get('period', 24))
 
-    try:
-        timestamp = arrow.get(request.args.get('timestamp', 0))
-    except:
-        return jsonify({
-            'type': 'error',
-            'time': arrow.utcnow().isoformat(),
-            'error': {
-                'errorCode': 103,
-                'errorInfo': 'please use ISO8601 format'
-            }
-        })
+    r = getDailyData(request.args['symbol'], request.args['timestamp'], period + 1)
 
     res = {
         'type': 'result',
@@ -89,8 +83,12 @@ def indicator():
         'result': {
             'symbol': request.args.get('symbol', 'ERROR'),
             'indicator': 'VR',
-            'timestamp': timestamp.isoformat(),
-            'data': int(random.random() * 100000) / 100
+            'timestamp': arrow.get(request.args['timestamp']).isoformat(),
+            'data': VolatilityRatio.indicator(
+                price=np.float_(r['close'][-1]),
+                historical_price=np.array(r['close'][:-1]),
+                historical_volume=np.array(r['volume'][:-1])
+            )
         }
     }
 
@@ -115,6 +113,12 @@ def predict():
     if check_result:
         return jsonify(check_result)
 
+    check_result = checkTimestamp(request.args['timestamp'])
+    if check_result:
+        return jsonify(check_result)
+
+    # request.args.get('timestamp')
+
     # ------------------------------------
     if request.args['term'] == 'short':
         r = getRealtimeData(request.args['symbol'], request.args['timestamp'])
@@ -129,9 +133,6 @@ def predict():
 
     bayes = Bayes.predict(time, price, np.array(predict_time).reshape(-1, 1))
     svr = SupportVectorRegression.predict(time, price, np.array(predict_time).reshape(-1, 1))
-
-
-
 
     res = {
         'type': 'result',

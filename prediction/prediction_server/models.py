@@ -8,6 +8,46 @@ from prediction_server import app
 from prediction_server import error_code
 
 
+def checkDate(symbol: str, timestamp: str):
+    url = 'mongodb://{username}:{password}@{host}:{port}'.format(
+        username=app.config.get('MONGODB_USERNAME'),
+        password=app.config.get('MONGODB_PASSWORD'),
+        host=app.config.get('MONGODB_HOST'),
+        port=app.config.get('MONGODB_PORT')
+    )
+
+    client = MongoClient(url)
+    daily = client['ece568']['daily']
+
+    t = arrow.get(timestamp).replace(tzinfo='+0000').floor('day')
+
+    if daily.find({'symbol': symbol, 'timestamp': t.datetime}).count() <= 0:
+        return {
+            'type': 'error',
+            'time': arrow.utcnow().isoformat(),
+            'error': {
+                'errorCode': error_code.ERROR_CODE_NOT_ON_THE_TRADING_DAY,
+                'errorInfo': 'Not on the trading day'
+            }
+        }
+    else:
+        return None
+
+
+def checkTimestamp(timestamp: str):
+    try:
+        timestamp = arrow.get(timestamp)
+    except:
+        return {
+            'type': 'error',
+            'time': arrow.utcnow().isoformat(),
+            'error': {
+                'errorCode': 103,
+                'errorInfo': 'please use ISO8601 format'
+            }
+        }
+
+
 def checkParameters(
         args: ImmutableMultiDict,
         parametersList: List[str],
@@ -102,7 +142,7 @@ def getDailyData(symbol: str, timestamp: str = None, n: int = 50) -> Dict[str, L
         'symbol': symbol
     }
     if timestamp:
-        query['timestamp'] = {'$lt': arrow.get(timestamp).datetime}
+        query['timestamp'] = {'$lte': arrow.get(timestamp).datetime}
 
     timestamp_ = []
     open_ = []
@@ -145,7 +185,7 @@ def getRealtimeData(symbol: str, timestamp: str = None, n: int = 50) -> Dict[str
         'symbol': symbol
     }
     if timestamp:
-        query['timestamp'] = {'$lt': arrow.get(timestamp).datetime}
+        query['timestamp'] = {'$lte': arrow.get(timestamp).datetime}
 
     timestamp_ = []
     price = []
