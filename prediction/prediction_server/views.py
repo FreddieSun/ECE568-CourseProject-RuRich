@@ -138,7 +138,7 @@ def predict():
         'time': arrow.utcnow().isoformat(),
         'result': {
             'symbol': request.args.get('symbol'),
-            'predictPrice': int(random.random() * 100000) / 100,
+            'predictPrice': (bayes[0] + svr[0]) / 2,
             'predictor': [
                 {'name': 'bayes', 'price': bayes[0]},
                 {'name': 'Support Vector Regression', 'price': svr[0]}
