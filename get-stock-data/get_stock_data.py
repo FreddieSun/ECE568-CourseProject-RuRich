@@ -37,7 +37,7 @@ class GetStockData(object):
             if 'Time Series (Daily)' in j:
                 tz = j['Meta Data']['5. Time Zone']
                 for d, info in j['Time Series (Daily)'].items():
-                    tmp_dict = {'timestamp': arrow.get(d).replace(tzinfo=tz).datetime,
+                    tmp_dict = {'timestamp': arrow.get(d).datetime,
                                 'symbol': s,
                                 'open': Decimal128(info['1. open']),
                                 'high': Decimal128(info['2. high']),
