@@ -2,7 +2,11 @@ package org.ece568.FinalProject.StockResource;
 
 import java.util.List;
 
+import javax.print.attribute.standard.Media;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -11,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.ece568.FinalProject.model.Comment;
 import org.ece568.FinalProject.model.RealTimeStock;
 import org.ece568.FinalProject.service.StockService;
 import org.glassfish.jersey.server.JSONP;
@@ -51,8 +56,23 @@ public class StockResource {
     			return stockService.getMonth(symbol);
     		} else if (type.equals("year")) {
     			return stockService.getYear(symbol);
+    		} else if(type.equals("comment")) {
+    			return stockService.getComment(symbol);
     		}
     		return null;
+    }
+    
+    @POST
+    @Path("/comment")
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addComment(
+    		@FormParam("username") String username,
+    		@FormParam("symbol") String symbol,
+    		@FormParam("timestamp") String timestamp,
+    		@FormParam("comment") String comment
+    		) {
+    		return stockService.addComment( symbol,  comment,  timestamp,  username);
     }
     
 }

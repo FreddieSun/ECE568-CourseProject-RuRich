@@ -71,5 +71,12 @@ public class StockService {
 		return dbUtil.getYear(symbol);
 	}
 	
+	public Response addComment(String symbol, String comment, String timestamp, String username) {
+		return dbUtil.addComment(symbol, comment, timestamp,  username);
+	}
+	
+	public Response getComment(String symbol) {
+		return dbUtil.getComment(symbol);
+	}
 
 }

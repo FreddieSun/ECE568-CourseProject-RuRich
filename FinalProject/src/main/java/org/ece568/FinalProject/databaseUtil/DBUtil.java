@@ -2,21 +2,20 @@ package org.ece568.FinalProject.databaseUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.ece568.FinalProject.model.Comment;
 import org.ece568.FinalProject.model.RealTimeStock;
-import org.eclipse.persistence.internal.libraries.asm.commons.StaticInitMerger;
 import org.json.JSONObject;
 
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import com.mongodb.client.AggregateIterable;
+import com.mongodb.MongoServerException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
@@ -323,5 +322,67 @@ public class DBUtil {
         mainObj.put("data", dataObj);
 		return Response.status(200).entity(mainObj.toString()).build();
 	}
+	
+	public Response addComment(String symbol, String comment, String timestamp, String username) {
+		MongoClient mongoClient = new MongoClient(new MongoClientURI(URL));
+
+        // connecting to mongodb
+        MongoDatabase mongoDatabase = mongoClient.getDatabase("ece568");
+        MongoCollection<Document> collection = mongoDatabase.getCollection("comment");
+        
+        Document document = new Document("symbol", symbol)
+        		.append("username", username)
+        		.append("comment", comment)
+        		.append("timestamp", timestamp);
+        
+        boolean isRegister=true;
+        try {
+          collection.insertOne(document);
+          }
+          catch (MongoServerException ex) {
+            isRegister=false;
+          }
+       
+        
+        JSONObject mainObj = new JSONObject();
+        if (isRegister) {
+        		mainObj.put("status", "true");
+        } else {
+        		mainObj.put("status", "false");
+        }
+        System.out.println();
+		return Response.status(200).entity(mainObj.toString()).build();
+	}
+	
+	public Response getComment(String symbol) {
+		MongoClient mongoClient = new MongoClient(new MongoClientURI(URL));
+		JSONObject mainObj = new JSONObject();
+
+        // connecting to mongodb
+        MongoDatabase mongoDatabase = mongoClient.getDatabase("ece568");
+        MongoCollection<Document> collection = mongoDatabase.getCollection("comment");
+        final List<Comment> list = new ArrayList<>();
+        
+        Block<Document> addToList = new Block<Document>() {
+	        @Override
+	        public void apply(final Document document) {
+	        		String timestamp = document.getString("timestamp");
+	        		String username = document.getString("username");
+	        		String symbol = document.getString("symbol");
+	        		String comment = document.getString("comment");
+	        		
+	        		list.add(new Comment(symbol,comment, timestamp, username));
+	        }
+        };
+        
+        collection.find(
+        		eq("symbol",symbol)
+        		).sort(Sorts.descending("timestamp")).limit(5).forEach(addToList);
+        
+        
+        mainObj.put("comment", list);
+		return Response.status(200).entity(mainObj.toString()).build();
+	}
+	
 
 }
