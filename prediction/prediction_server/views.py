@@ -5,6 +5,7 @@ import numpy as np
 from flask import request, jsonify
 
 from prediction_engine.bayes import Bayes
+from prediction_engine.svr_zhu import SupportVectorRegression
 from prediction_server import app
 from prediction_server.jsonp import jsonp
 from prediction_server.models import checkParameters, getDailyData, checkSymbol, getRealtimeData
@@ -127,8 +128,7 @@ def predict():
     predict_time = arrow.get(request.args['timestamp']).timestamp
 
     bayes = Bayes.predict(time, price, np.array(predict_time).reshape(-1, 1))
-
-    print(bayes)
+    svr = SupportVectorRegression.predict(time, price, np.array(predict_time).reshape(-1, 1))
 
 
 
@@ -140,7 +140,8 @@ def predict():
             'symbol': request.args.get('symbol'),
             'predictPrice': int(random.random() * 100000) / 100,
             'predictor': [
-                {'name': 'bayes', 'price': bayes[0]}
+                {'name': 'bayes', 'price': bayes[0]},
+                {'name': 'Support Vector Regression', 'price': svr[0]}
             ],
             'note': 'ONLY OFR TESTING!',
             'timestamp': arrow.get(request.args['timestamp']).isoformat()
