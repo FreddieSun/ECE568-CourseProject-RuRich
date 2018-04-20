@@ -121,7 +121,7 @@ def predict():
 
     # ------------------------------------
     if request.args['term'] == 'short':
-        r = getRealtimeData(request.args['symbol'], request.args['timestamp'])
+        r = getRealtimeData(request.args['symbol'], request.args['timestamp'], 700)
         time = np.array(r['timestamp']).reshape(-1, 1)
         price = np.array(r['price'])
     else:

@@ -10,7 +10,7 @@ class Bayes(object):
     def predict(X: np.ndarray, y: np.ndarray, x: np.ndarray):
         pipe = make_pipeline(
             StandardScaler(),
-            PolynomialFeatures(17),
+            PolynomialFeatures(7),
             BayesianRidge(normalize=False)
         )  # type: Pipeline
 
