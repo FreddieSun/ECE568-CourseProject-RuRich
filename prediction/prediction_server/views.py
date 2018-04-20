@@ -1,8 +1,10 @@
 import random
 
 import arrow
+import numpy as np
 from flask import request, jsonify
 
+from prediction_engine.bayes import Bayes
 from prediction_server import app
 from prediction_server.jsonp import jsonp
 from prediction_server.models import checkParameters, getDailyData, checkSymbol, getRealtimeData
@@ -18,9 +20,6 @@ def daily_data():
     check_result = checkParameters(
         args=request.args,
         parametersList=['symbol', ],
-        parameterType={
-            'symbol': [str, ]
-        }
     )
     if check_result:
         return jsonify(check_result)
@@ -37,9 +36,6 @@ def realtime_data():
     check_result = checkParameters(
         args=request.args,
         parametersList=['symbol', ],
-        parameterType={
-            'symbol': [str, ]
-        }
     )
     if check_result:
         return jsonify(check_result)
@@ -61,10 +57,6 @@ def indicator():
     check_result = checkParameters(
         args=request.args,
         parametersList=['timestamp', 'symbol'],
-        parameterType={
-            'timestamp': [str, ],
-            'symbol': [str, ]
-        }
     )
     if check_result:
         return jsonify(check_result)
@@ -110,11 +102,7 @@ def predict():
     # check parameters
     check_result = checkParameters(
         args=request.args,
-        parametersList=['symbol', 'term'],
-        parameterType={
-            'symbol': [str, ],
-            'term': [str, ]
-        },
+        parametersList=['symbol', 'term', 'timestamp'],
         parameterOptions={
             'term': ['short', 'long']
         })
@@ -126,13 +114,36 @@ def predict():
     if check_result:
         return jsonify(check_result)
 
+    # ------------------------------------
+    if request.args['term'] == 'short':
+        r = getRealtimeData(request.args['symbol'], request.args['timestamp'])
+        time = np.array(r['timestamp']).reshape(-1, 1)
+        price = np.array(r['price'])
+    else:
+        r = getDailyData(request.args['symbol'], request.args['timestamp'])
+        time = np.array(r['timestamp']).reshape(-1, 1)
+        price = np.array(r['open'])
+
+    predict_time = arrow.get(request.args['timestamp']).timestamp
+
+    bayes = Bayes.predict(time, price, np.array(predict_time).reshape(-1, 1))
+
+    print(bayes)
+
+
+
+
     res = {
         'type': 'result',
         'time': arrow.utcnow().isoformat(),
         'result': {
             'symbol': request.args.get('symbol'),
             'predictPrice': int(random.random() * 100000) / 100,
-            'note': 'ONLY OFR TESTING!'
+            'predictor': [
+                {'name': 'bayes', 'price': bayes[0]}
+            ],
+            'note': 'ONLY OFR TESTING!',
+            'timestamp': arrow.get(request.args['timestamp']).isoformat()
         }
     }
     return jsonify(res)

@@ -11,7 +11,6 @@ from prediction_server import error_code
 def checkParameters(
         args: ImmutableMultiDict,
         parametersList: List[str],
-        parameterType: Dict[str, List[type]] = None,
         parameterOptions: Dict[str, List[str]] = None):
     if parameterOptions is None:
         parameterOptions = {}
@@ -31,21 +30,21 @@ def checkParameters(
             }
         }
 
-    invalid_type_parameters = []
-    for k, v in parameterType.items():
-        if type(args.get(k)) not in v:
-            invalid_type_parameters.append(k)
-    if invalid_type_parameters:
-        return {
-            'type': 'error',
-            'time': arrow.utcnow().isoformat(),
-            'error': {
-                'errorCode': error_code.ERROR_CODE_INVALID_PARAMETERS_TYPE,
-                'errorInfo': 'Invalid parameter type',
-                'invalidParametersType': [{'parameter': ele, 'types': [e.__name__ for e in parameterType[ele]]} for ele
-                                          in invalid_type_parameters]
-            }
-        }
+    # invalid_type_parameters = []
+    # for k, v in parameterType.items():
+    #     if type(args.get(k)) not in v:
+    #         invalid_type_parameters.append(k)
+    # if invalid_type_parameters:
+    #     return {
+    #         'type': 'error',
+    #         'time': arrow.utcnow().isoformat(),
+    #         'error': {
+    #             'errorCode': error_code.ERROR_CODE_INVALID_PARAMETERS_TYPE,
+    #             'errorInfo': 'Invalid parameter type',
+    #             'invalidParametersType': [{'parameter': ele, 'types': [e.__name__ for e in parameterType[ele]]} for ele
+    #                                       in invalid_type_parameters]
+    #         }
+    #     }
 
     invalid_parameter = []
     for k, v in parameterOptions.items():
@@ -88,7 +87,7 @@ def checkSymbol(symbol: str):
     return None
 
 
-def getDailyData(symbol: str, n: int = 50) -> Dict[str, List[Union[float, int]]]:
+def getDailyData(symbol: str, timestamp: str = None, n: int = 50) -> Dict[str, List[Union[float, int]]]:
     url = 'mongodb://{username}:{password}@{host}:{port}'.format(
         username=app.config.get('MONGODB_USERNAME'),
         password=app.config.get('MONGODB_PASSWORD'),
@@ -99,16 +98,22 @@ def getDailyData(symbol: str, n: int = 50) -> Dict[str, List[Union[float, int]]]
     client = MongoClient(url)
     daily = client['ece568']['daily']
 
-    timestamp = []
+    query = {
+        'symbol': symbol
+    }
+    if timestamp:
+        query['timestamp'] = {'$lt': arrow.get(timestamp).datetime}
+
+    timestamp_ = []
     open_ = []
     close = []
     high = []
     low = []
     volume = []
 
-    for row in daily.find({'symbol': symbol}, {'_id': 0.0}).sort(
+    for row in daily.find(query, {'_id': 0.0}).sort(
             [('timestamp', DESCENDING), ]).limit(n):
-        timestamp.append(row['timestamp'].timestamp())
+        timestamp_.append(row['timestamp'].timestamp())
         open_.append(float(row['open'].to_decimal()))
         close.append(float(row['close'].to_decimal()))
         high.append(float(row['high'].to_decimal()))
@@ -116,7 +121,7 @@ def getDailyData(symbol: str, n: int = 50) -> Dict[str, List[Union[float, int]]]
         volume.append(row['volume'])
 
     return {
-        'timestamp': timestamp[::-1],
+        'timestamp': timestamp_[::-1],
         'open': open_[::-1],
         'close': close[::-1],
         'high': high[::-1],
@@ -125,7 +130,7 @@ def getDailyData(symbol: str, n: int = 50) -> Dict[str, List[Union[float, int]]]
     }
 
 
-def getRealtimeData(symbol: str, n: int = 50) -> Dict[str, List[Union[float, int]]]:
+def getRealtimeData(symbol: str, timestamp: str = None, n: int = 50) -> Dict[str, List[Union[float, int]]]:
     url = 'mongodb://{username}:{password}@{host}:{port}'.format(
         username=app.config.get('MONGODB_USERNAME'),
         password=app.config.get('MONGODB_PASSWORD'),
@@ -136,18 +141,24 @@ def getRealtimeData(symbol: str, n: int = 50) -> Dict[str, List[Union[float, int
     client = MongoClient(url)
     realtime = client['ece568']['realtime']
 
-    timestamp = []
+    query = {
+        'symbol': symbol
+    }
+    if timestamp:
+        query['timestamp'] = {'$lt': arrow.get(timestamp).datetime}
+
+    timestamp_ = []
     price = []
     volume = []
 
-    for row in realtime.find({'symbol': symbol}, {'_id': 0.0}).sort(
+    for row in realtime.find(query, {'_id': 0.0}).sort(
             [('timestamp', DESCENDING), ]).limit(n):
-        timestamp.append(row['timestamp'].timestamp())
+        timestamp_.append(row['timestamp'].timestamp())
         price.append(float(row['price'].to_decimal()))
         volume.append(row['volume'])
 
     return {
-        'timestamp': timestamp[::-1],
+        'timestamp': timestamp_[::-1],
         'price': price[::-1],
         'volume': volume[::-1]
     }
