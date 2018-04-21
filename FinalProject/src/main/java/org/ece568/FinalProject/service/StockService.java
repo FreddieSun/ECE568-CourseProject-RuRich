@@ -78,5 +78,9 @@ public class StockService {
 	public Response getComment(String symbol) {
 		return dbUtil.getComment(symbol);
 	}
+	
+	public Response getlowerAvgSymbol(String symbol) {
+		return dbUtil.getLowerAvgSymbol(symbol);
+	}
 
 }

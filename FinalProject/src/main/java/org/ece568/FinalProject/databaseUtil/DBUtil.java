@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.Response;
 
@@ -12,16 +14,23 @@ import org.ece568.FinalProject.model.Comment;
 import org.ece568.FinalProject.model.RealTimeStock;
 import org.json.JSONObject;
 
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Projections;
 import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 import com.mongodb.MongoServerException;
+import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import static com.mongodb.client.model.Accumulators.*;
 import static com.mongodb.client.model.Aggregates.*;
 import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Projections.*;
+
+
+import com.mongodb.client.model.Aggregates;
 import com.mongodb.client.model.Sorts;
 import static java.util.Arrays.asList;
 
@@ -31,7 +40,6 @@ import org.bson.Document;
 public class DBUtil {
 	public final String[] STOCK_LIST = {"GOOG", "AABA", "FB", "MSFT", "TWTR", "AAPL", "JPM", "AMZN", "JNJ", "BAC"};
 	public static final String URL = "mongodb://ece568:ece568project@zwithc.cn:27017";
-	
 	/*
 	 * 4.1 1. Show the list of all companies in the database 
 	 * along with their latest stock price (real time latest stock price)
@@ -93,7 +101,7 @@ public class DBUtil {
     				asList(
     				          new Document("$match", new Document("symbol", symbol)),
     					      new Document("$sort", new Document("timestamp", -1)),
-    					      new Document("$limit", 10),
+    					      new Document("$limit", 252),
     					      group(
        					           "_id:0",
        					           avg("avg", "$close")   
@@ -128,7 +136,7 @@ public class DBUtil {
     				asList(
     				          new Document("$match", new Document("symbol", symbol)),
     					      new Document("$sort", new Document("timestamp", -1)),
-    					      new Document("$limit", 252),
+    					      new Document("$limit", 10),
     					      group(
        					           "_id:0",
        					           max("max", "$high")
@@ -198,15 +206,13 @@ public class DBUtil {
 		    		priceList.add(document.get("price").toString());
 		    		volumeList.add(document.get("volume").toString());
 	        }
-        };        
+        };
         
         MongoCursor<Document> output = collection.find(
-        		and(eq("symbol",symbol),gte("timestamp", new Date((new Date().getTime() - (24 * 60 * 60 * 1000)))))
-        		).sort(Sorts.descending("timestamp")).limit(9000).iterator();
+        		eq("symbol",symbol)).sort(Sorts.descending("timestamp")).limit(9000).iterator();
         
 		mainObj.put("symbol", symbol);
-
-        
+		
         int i = 0;
         while(output.hasNext()) {
         		i++;
@@ -217,7 +223,6 @@ public class DBUtil {
 		    		volumeList.add(temp.get("volume").toString());
         		}
         }
-        
         
         Collections.reverse(timeList);
         Collections.reverse(priceList);
@@ -381,6 +386,75 @@ public class DBUtil {
         
         
         mainObj.put("comment", list);
+		return Response.status(200).entity(mainObj.toString()).build();
+	}
+
+	public Response getLowerAvgSymbol(final String symbol) {
+		MongoClient mongoClient = new MongoClient(new MongoClientURI(URL));
+		final JSONObject mainObj = new JSONObject();
+        final List<String> list = new ArrayList<>();
+        final JSONObject lowPrice = new JSONObject();
+        final Map<String, String> avgMap = new HashMap<>();
+		final Map<String, String> map = new HashMap();
+		//
+        // connecting to mongodb
+        MongoDatabase mongoDatabase = mongoClient.getDatabase("ece568");
+        MongoCollection<Document> collection = mongoDatabase.getCollection("daily");	
+        
+      Block<Document> addLow = new Block<Document>() {
+        @Override
+        public void apply(final Document document) {
+        		lowPrice.put(symbol, document.get("min"));
+        		System.out.println("lowest + " + document.get("_id").toString() + " " + document.get("min"));
+
+        }
+    };
+        
+        Block<Document> addAvg = new Block<Document>() {
+	        @Override
+	        public void apply(final Document document) {
+        			avgMap.put(document.get("_id").toString(), document.get("avg").toString());
+
+	        		System.out.println("avg + " + document.get("_id").toString() + " " + document.get("avg"));
+	        }
+        };
+        
+      collection.aggregate(
+  				asList(
+  				          new Document("$match", new Document("symbol", symbol)),
+  					      new Document("$sort", new Document("timestamp", -1)),
+					      new Document("$limit", 252),
+  					      group(
+     					           "$symbol" ,
+     					           min("min", "$low")         
+     					      )
+  					   )
+      		).forEach(addLow);
+        
+        for (String s: STOCK_LIST) {
+	        collection.aggregate(
+	    				asList(
+	    				          new Document("$match", new Document("symbol", s)),
+	    					      new Document("$sort", new Document("timestamp", -1)),
+	    					      new Document("$limit", 252),
+	    					      group(	
+	    					    		  	   "$symbol",
+	       					           avg("avg", "$close")   
+	       					      )
+	    					   )
+	        		).forEach(addAvg);
+        }
+        
+        System.out.println("test");
+      for (Map.Entry<String, String> entry : avgMap.entrySet()) {
+    	  if (Double.valueOf(entry.getValue()) < Double.valueOf(lowPrice.get(symbol).toString())) {
+			list.add(entry.getKey());
+		
+		}
+      mainObj.put("Stock List", list);
+      }
+        
+        
 		return Response.status(200).entity(mainObj.toString()).build();
 	}
 	

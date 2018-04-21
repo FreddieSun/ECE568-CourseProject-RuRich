@@ -58,6 +58,8 @@ public class StockResource {
     			return stockService.getYear(symbol);
     		} else if(type.equals("comment")) {
     			return stockService.getComment(symbol);
+    		} else if(type.equals("loweravg")) {
+    			return stockService.getlowerAvgSymbol(symbol);
     		}
     		return null;
     }
