@@ -5,6 +5,8 @@ from flask import request, jsonify
 from prediction_engine.bayes import Bayes
 from prediction_engine.svr_zhu import SupportVectorRegression
 from prediction_engine.vr import VolatilityRatio
+from prediction_engine.ema import EMA
+from prediction_engine.macd import MACD
 from prediction_server import app
 from prediction_server.jsonp import jsonp
 from prediction_server.models import checkParameters, getDailyData, \
@@ -94,6 +96,97 @@ def indicator():
 
     return jsonify(res)
 
+@app.route('/api/v0.1.0/ema')
+@jsonp
+def indicator():
+    check_result = checkParameters(
+        args=request.args,
+        parametersList=['timestamp', 'symbol'],
+    )
+    if check_result:
+        return jsonify(check_result)
+
+    check_result = checkSymbol(request.args['symbol'])
+    if check_result:
+        return jsonify(check_result)
+
+    check_result = checkTimestamp(request.args['timestamp'])
+    if check_result:
+        return jsonify(check_result)
+
+    check_result = checkDate(request.args['symbol'], request.args['timestamp'])
+    if check_result:
+        return jsonify(check_result)
+
+    # timestamp = arrow.get(request.args.get('timestamp', 0))
+    # data_list = []
+
+    period = int(request.args.get('period', 10))
+
+    r = getDailyData(request.args['symbol'], request.args['timestamp'], period + 1)
+
+    res = {
+        'type': 'result',
+        'time': arrow.utcnow().isoformat(),
+        'result': {
+            'symbol': request.args.get('symbol', 'ERROR'),
+            'indicator': 'EMA',
+            'timestamp': arrow.get(request.args['timestamp']).isoformat(),
+            'data': EMA.value(
+                vals = np.array(r)
+            )
+        }
+    }
+
+    return jsonify(res)
+
+@app.route('/api/v0.1.0/macd')
+@jsonp
+def indicator():
+    check_result = checkParameters(
+        args=request.args,
+        parametersList=['timestamp', 'symbol'],
+    )
+    if check_result:
+        return jsonify(check_result)
+
+    check_result = checkSymbol(request.args['symbol'])
+    if check_result:
+        return jsonify(check_result)
+
+    check_result = checkTimestamp(request.args['timestamp'])
+    if check_result:
+        return jsonify(check_result)
+
+    check_result = checkDate(request.args['symbol'], request.args['timestamp'])
+    if check_result:
+        return jsonify(check_result)
+
+    # timestamp = arrow.get(request.args.get('timestamp', 0))
+    # data_list = []
+
+    period_first = 12
+    period_second = 26
+
+    r_first = getDailyData(request.args['symbol'], request.args['timestamp'], period_first)
+    r_second = getDailyData(request.args['symbol'], request.args['timestamp'], period_second)
+
+    res = {
+        'type': 'result',
+        'time': arrow.utcnow().isoformat(),
+        'result': {
+            'symbol': request.args.get('symbol', 'ERROR'),
+            'indicator': 'MACD',
+            'timestamp': arrow.get(request.args['timestamp']).isoformat(),
+            'data': MACD.value(
+                val12 = np.array(r_first),
+                val26 = np.array(r_second)
+            )
+        }
+    }
+
+    return jsonify(res)
+
 
 @app.route('/api/v0.1.0/predict')
 @jsonp
@@ -144,7 +237,7 @@ def predict():
                 {'name': 'bayes', 'price': bayes[0]},
                 {'name': 'Support Vector Regression', 'price': svr[0]}
             ],
-            'note': 'ONLY OFR TESTING!',
+            'note': 'ONLY FOR TESTING!',
             'timestamp': arrow.get(request.args['timestamp']).isoformat()
         }
     }
