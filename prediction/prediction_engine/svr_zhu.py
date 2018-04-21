@@ -1,13 +1,10 @@
 from os import cpu_count
 
-import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.model_selection import GridSearchCV
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVR
-
-from prediction_engine.get_data import get_long_term_data
 
 
 class SupportVectorRegression(object):
@@ -33,15 +30,3 @@ class SupportVectorRegression(object):
         grid_search.fit(X, y)
 
         return grid_search.predict(x)
-
-
-if __name__ == '__main__':
-    x, y, v = get_long_term_data('AAPL')
-
-    x = np.array(x).reshape(-1, 1)
-    y = np.array(y)
-
-    plt.plot(x, y, 'r.-')
-    plt.plot(x, SupportVectorRegression.predict(x, y, x), 'b-')
-
-    plt.show()

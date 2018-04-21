@@ -49,20 +49,3 @@ class Bayes(object):
         pipe.fit(X, y)
 
         return pipe.predict(x)
-
-
-if __name__ == '__main__':
-    from prediction_engine.get_data import get_long_term_data
-    import matplotlib.pyplot as plt
-
-    x, y, v = get_long_term_data('AAPL')
-
-    x = np.array(x).reshape(-1, 1)
-    y = np.array(y)
-
-    p = Bayes.predict(x, y, x)
-    #
-    plt.plot(x, y, 'r.-')
-    plt.plot(x, p)
-
-    plt.show()
