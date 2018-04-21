@@ -52,7 +52,7 @@ def realtime_data():
 
 @app.route('/api/v0.1.0/vr')
 @jsonp
-def indicator():
+def indicator_vr():
     check_result = checkParameters(
         args=request.args,
         parametersList=['timestamp', 'symbol'],
@@ -134,7 +134,7 @@ def indicator_ema():
             'indicator': 'EMA',
             'timestamp': arrow.get(request.args['timestamp']).isoformat(),
             'data': EMA.value(
-                vals = np.array(r)
+                vals = np.array(r['close'][:-1])
             )
         }
     }
@@ -181,8 +181,8 @@ def indicator_macd():
             'indicator': 'MACD',
             'timestamp': arrow.get(request.args['timestamp']).isoformat(),
             'data': MACD.value(
-                val12 = np.array(r_first),
-                val26 = np.array(r_second)
+                val12 = np.array(r_first['close'][:-1]),
+                val26 = np.array(r_second['close'][:-1])
             )
         }
     }

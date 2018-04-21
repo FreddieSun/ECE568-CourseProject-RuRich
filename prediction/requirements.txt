@@ -4,3 +4,4 @@ flask
 arrow
 pymongo
 scipy
+tensorflow
