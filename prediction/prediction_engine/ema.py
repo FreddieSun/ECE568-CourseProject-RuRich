@@ -16,7 +16,7 @@ class EMA(object):
 
     @staticmethod
     def value(vals: np.ndarray) -> np.float_:
-        if len(vals) < 10:
+        if vals.size < 10:
             return np.float_(-1)
         ret = EMA.MA(vals[0:10])
         vals = vals[10:]
