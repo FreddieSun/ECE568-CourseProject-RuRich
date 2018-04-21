@@ -96,9 +96,10 @@ def indicator():
 
     return jsonify(res)
 
+
 @app.route('/api/v0.1.0/ema')
 @jsonp
-def indicator():
+def indicator_ema():
     check_result = checkParameters(
         args=request.args,
         parametersList=['timestamp', 'symbol'],
@@ -140,9 +141,10 @@ def indicator():
 
     return jsonify(res)
 
+
 @app.route('/api/v0.1.0/macd')
 @jsonp
-def indicator():
+def indicator_macd():
     check_result = checkParameters(
         args=request.args,
         parametersList=['timestamp', 'symbol'],
