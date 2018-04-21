@@ -7,6 +7,7 @@ from prediction_engine.svr_zhu import SupportVectorRegression
 from prediction_engine.vr import VolatilityRatio
 from prediction_engine.ema import EMA
 from prediction_engine.macd import MACD
+from prediction_engine.dnn import DNN
 from prediction_server import app
 from prediction_server.jsonp import jsonp
 from prediction_server.models import checkParameters, getDailyData, \
@@ -228,16 +229,18 @@ def predict():
 
     bayes = Bayes.predict(time, price, np.array(predict_time).reshape(-1, 1))
     svr = SupportVectorRegression.predict(time, price, np.array(predict_time).reshape(-1, 1))
+    dnn = DNN.predict(time, price, np.array(predict_time).reshape(-1, 1))
 
     res = {
         'type': 'result',
         'time': arrow.utcnow().isoformat(),
         'result': {
             'symbol': request.args.get('symbol'),
-            'predictPrice': (bayes[0] + svr[0]) / 2,
+            'predictPrice': (bayes[0] + svr[0] + dnn) / 3,
             'predictor': [
                 {'name': 'bayes', 'price': bayes[0]},
-                {'name': 'Support Vector Regression', 'price': svr[0]}
+                {'name': 'Support Vector Regression', 'price': svr[0]},
+                {'name': 'Deep Neural Network', 'price': dnn}
             ],
             'note': 'ONLY FOR TESTING!',
             'timestamp': arrow.get(request.args['timestamp']).isoformat()
