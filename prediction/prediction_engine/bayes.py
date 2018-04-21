@@ -7,14 +7,62 @@ from sklearn.preprocessing import StandardScaler, PolynomialFeatures
 class Bayes(object):
 
     @staticmethod
-    def predict(X: np.ndarray, y: np.ndarray, x: np.ndarray):
+    def calculate_score(deg, X, y):
         pipe = make_pipeline(
             StandardScaler(),
-            PolynomialFeatures(7),
+            PolynomialFeatures(deg),
             BayesianRidge(normalize=False)
         )  # type: Pipeline
+
+        pipe.fit(X, y)
+        return pipe.score(X, y)
+
+    @staticmethod
+    def predict(X: np.ndarray, y: np.ndarray, x: np.ndarray):
+
+        s = None
+        d = 3
+
+        for i in range(50):
+            sc = Bayes.calculate_score(i, X, y)
+            print(i, sc)
+            if s is None or sc > s:
+                s = sc
+                d = i
+
+        pipe = make_pipeline(
+            StandardScaler(),
+            PolynomialFeatures(d),
+            BayesianRidge(normalize=False)
+        )  # type: Pipeline
+
+        # grid_search = GridSearchCV(
+        #     pipe,
+        #     param_grid={
+        #         'polynomialfeatures__degree': list(range(50))
+        #     },
+        #     # n_jobs=cpu_count(),
+        #     cv=X.shape[0] // 10,
+        #     verbose=3
+        # )
 
         pipe.fit(X, y)
 
         return pipe.predict(x)
 
+
+if __name__ == '__main__':
+    from prediction_engine.get_data import get_long_term_data
+    import matplotlib.pyplot as plt
+
+    x, y, v = get_long_term_data('AAPL')
+
+    x = np.array(x).reshape(-1, 1)
+    y = np.array(y)
+
+    p = Bayes.predict(x, y, x)
+    #
+    plt.plot(x, y, 'r.-')
+    plt.plot(x, p)
+
+    plt.show()
