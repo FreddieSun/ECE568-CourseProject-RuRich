@@ -16,30 +16,32 @@ class SupportVectorRegression(object):
     def predict(X: np.ndarray, y: np.ndarray, x: np.ndarray):
         pipe = make_pipeline(
             StandardScaler(),
-            SVR(kernel='rbf', C=1e3, gamma=10)
+            SVR()
         )
 
         grid_search = GridSearchCV(
             pipe,
             param_grid={
-                # 'svr__kernel': ['rbf', 'poly'],
-                # 'svr__degree': list(range(10)),
-                'svr__gamma': [0.1, 0.3, 1, 3, 10, 30],
-                'svr__C': [1e3, ]
+                'svr__gamma': np.logspace(-2, 2, 5),
+                'svr__C': [1e0, 1e1, 1e2, 1e3]
             },
             n_jobs=cpu_count(),
+            cv=X.shape[0] // 10,
             verbose=3
         )
 
-        pipe.fit(X, y)
+        grid_search.fit(X, y)
 
-        return pipe.predict(x)
+        return grid_search.predict(x)
 
 
 if __name__ == '__main__':
-    x, y = get_long_term_data('GOOG')
+    x, y, v = get_long_term_data('AAPL')
 
-    plt.plot(x, y, 'r-')
+    x = np.array(x).reshape(-1, 1)
+    y = np.array(y)
+
+    plt.plot(x, y, 'r.-')
     plt.plot(x, SupportVectorRegression.predict(x, y, x), 'b-')
 
     plt.show()
