@@ -20,14 +20,16 @@ class DNN(object):
         X = X[0] - X
         X = X / DAY_SECONDS
 
-        # x = X[0] - x
-        # x = x / DAY_SECONDS
+        x = X[0] - x
+        x = x / DAY_SECONDS
 
-        print(y[50])
-        x = np.asarray(X[50]).reshape(-1, 1)
+        print(X)
         print(x)
-        X = X[:50]
-        y = y[:50]
+        # print(y[50])
+        # x = np.asarray(X[50]).reshape(-1, 1)
+        # print(x)
+        # X = X[:50]
+        # y = y[:50]
 
         # get the training set and cross-valid set
         rate = 1 # typically 0.7
