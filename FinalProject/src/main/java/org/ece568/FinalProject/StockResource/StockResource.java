@@ -24,7 +24,7 @@ import org.json.JSONObject;
 
 import javassist.compiler.ast.Symbol;
 
-@Path("StockResource")
+@Path("stockresource")
 public class StockResource {
 	
 	StockService stockService = new StockService();
