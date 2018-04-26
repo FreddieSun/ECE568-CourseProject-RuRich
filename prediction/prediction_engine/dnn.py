@@ -4,12 +4,11 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import random
-
 import numpy as np
 import tensorflow as tf
+import random
 
-STEPS = 1500
+STEPS = 1000
 PRICE_NORM_FACTOR = 10
 DAY_SECONDS = 86400
 
@@ -18,14 +17,11 @@ class DNN(object):
 
     @staticmethod
     def pre_process(X: np.ndarray, y: np.ndarray, x: np.ndarray):
+        x = X[0] - x
         X = X[0] - X
         X = X / DAY_SECONDS
-
-        x = X[0] - x
         x = x / DAY_SECONDS
 
-        # print(X)
-        # print(x)
         # print(y[50])
         # x = np.asarray(X[50]).reshape(-1, 1)
         # print(x)
@@ -61,7 +57,6 @@ class DNN(object):
     @staticmethod
     def predict(X: np.ndarray, y: np.ndarray, x: np.ndarray):
         (train, test, to_predict_x) = DNN.pre_process(X, y, x)
-
         # Build the training input_fn.
         def input_train():
             return (
@@ -86,7 +81,7 @@ class DNN(object):
             hidden_units=[20, 20],
             feature_columns=feature_columns,
             optimizer=tf.train.ProximalAdagradOptimizer(
-                learning_rate=0.1, #512, 256, 0.008, norm_factor = 1
+                learning_rate=0.3, #512, 256, 0.008, norm_factor = 1
                 l1_regularization_strength=0.001
             )
         )
