@@ -1,6 +1,27 @@
 version: "3.6"
 
 services:
+  prediction:
+    build:
+      context: ./prediction
+      dockerfile: Dockerfile
+    secrets:
+      - mongodb_password
+    ports:
+      - "5002:5001"
+    environment:
+      PYTHONUNBUFFERED: "1"
+      MONGODB_USERNAME: ece568
+      MONGODB_PASSWORD_FILE: /run/secrets/mongodb_password
+      MONGODB_HOST: zwithc.cn
+
+secrets:
+  mongodb_password:
+    file: ./mongo_initdb_root_password
+
+
+
+
   get-stock-data:
     build:
       context: ./get-stock-data
