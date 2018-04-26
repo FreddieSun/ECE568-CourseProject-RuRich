@@ -24,7 +24,7 @@ class SupportVectorRegression(object):
             },
             n_jobs=cpu_count(),
             cv=X.shape[0] // 10,
-            verbose=3
+            verbose=0
         )
 
         grid_search.fit(X, y)

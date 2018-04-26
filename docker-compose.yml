@@ -8,7 +8,7 @@ services:
     secrets:
       - mongodb_password
     ports:
-      - "5001:5001"
+      - "5002:5001"
     environment:
       PYTHONUNBUFFERED: "1"
       MONGODB_USERNAME: ece568

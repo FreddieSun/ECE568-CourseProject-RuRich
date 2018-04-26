@@ -22,4 +22,4 @@ if __name__ == '__main__':
 
     app.config['MONGODB_PORT'] = os.getenv('MONGODB_PORT', 27017)
 
-    app.run(host='0.0.0.0', port=5001)
+    app.run(host='0.0.0.0', port=5001, threaded=True)

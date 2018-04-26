@@ -3,12 +3,12 @@ import numpy as np
 from flask import request, jsonify
 
 from prediction_engine.bayes import Bayes
-from prediction_engine.svr_zhu import SupportVectorRegression
-from prediction_engine.vr import VolatilityRatio
+from prediction_engine.dnn import DNN
 from prediction_engine.ema import EMA
 from prediction_engine.macd import MACD
-from prediction_engine.dnn import DNN
-from prediction_server import app
+from prediction_engine.svr_zhu import SupportVectorRegression
+from prediction_engine.vr import VolatilityRatio
+from prediction_server import app, pool
 from prediction_server.jsonp import jsonp
 from prediction_server.models import checkParameters, getDailyData, \
     checkSymbol, getRealtimeData, checkDate, checkTimestamp
@@ -135,7 +135,7 @@ def indicator_ema():
             'indicator': 'EMA',
             'timestamp': arrow.get(request.args['timestamp']).isoformat(),
             'data': EMA.value(
-                vals = np.array(r['close'][:-1])
+                vals=np.array(r['close'][:-1])
             )
         }
     }
@@ -182,8 +182,8 @@ def indicator_macd():
             'indicator': 'MACD',
             'timestamp': arrow.get(request.args['timestamp']).isoformat(),
             'data': MACD.value(
-                val12 = np.array(r_first['close'][:-1]),
-                val26 = np.array(r_second['close'][:-1])
+                val12=np.array(r_first['close'][:-1]),
+                val26=np.array(r_second['close'][:-1])
             )
         }
     }
@@ -217,19 +217,24 @@ def predict():
 
     # ------------------------------------
     if request.args['term'] == 'short':
-        r = getRealtimeData(request.args['symbol'], request.args['timestamp'], 700)
+        r = getDailyData(request.args['symbol'], request.args['timestamp'], 50)
         time = np.array(r['timestamp']).reshape(-1, 1)
-        price = np.array(r['price'])
+        price = np.array(r['open'])
     else:
-        r = getDailyData(request.args['symbol'], request.args['timestamp'])
+        r = getDailyData(request.args['symbol'], request.args['timestamp'], 252)
         time = np.array(r['timestamp']).reshape(-1, 1)
         price = np.array(r['open'])
 
     predict_time = arrow.get(request.args['timestamp']).timestamp
 
-    bayes = Bayes.predict(time, price, np.array(predict_time).reshape(-1, 1))
-    svr = SupportVectorRegression.predict(time, price, np.array(predict_time).reshape(-1, 1))
-    dnn = DNN.predict(time, price, np.array(predict_time).reshape(-1, 1))
+    bayes = pool.apply_async(Bayes.predict, [time, price, np.array(predict_time).reshape(-1, 1)]).get()
+    # bayes = Bayes.predict(time, price, np.array(predict_time).reshape(-1, 1))
+    svr = pool.apply_async(SupportVectorRegression.predict, [time, price, np.array(predict_time).reshape(-1, 1)]).get()
+    # svr = SupportVectorRegression.predict(time, price, np.array(predict_time).reshape(-1, 1))
+    dnn = pool.apply_async(DNN.predict, [time, price, np.array(predict_time).reshape(-1, 1)]).get()
+    # dnn = DNN.predict(time, price, np.array(predict_time).reshape(-1, 1))
+
+    # dnn = svr[0]
 
     res = {
         'type': 'result',

@@ -25,7 +25,7 @@ class Bayes(object):
 
         for i in range(50):
             sc = Bayes.calculate_score(i, X, y)
-            print(i, sc)
+            # print(i, sc)
             if s is None or sc > s:
                 s = sc
                 d = i

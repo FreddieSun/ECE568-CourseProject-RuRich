@@ -4,9 +4,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import random
+
 import numpy as np
 import tensorflow as tf
-import random
 
 STEPS = 1500
 PRICE_NORM_FACTOR = 10
@@ -23,8 +24,8 @@ class DNN(object):
         x = X[0] - x
         x = x / DAY_SECONDS
 
-        print(X)
-        print(x)
+        # print(X)
+        # print(x)
         # print(y[50])
         # x = np.asarray(X[50]).reshape(-1, 1)
         # print(x)
