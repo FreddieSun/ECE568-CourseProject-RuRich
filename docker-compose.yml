@@ -8,16 +8,21 @@ services:
     secrets:
       - mongodb_password
     ports:
-      - "5002:5001"
+      - "5001:5001"
     environment:
       PYTHONUNBUFFERED: "1"
       MONGODB_USERNAME: ece568
       MONGODB_PASSWORD_FILE: /run/secrets/mongodb_password
       MONGODB_HOST: zwithc.cn
 
+  web:
+    image: tomcat
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./web/target/FinalProject.war:/usr/local/tomcat/webapps/ROOT.war
+      - ./web/target/FinalProject:/usr/local/tomcat/webapps/ROOT
+
 secrets:
   mongodb_password:
     file: ./mongo_initdb_root_password
-
-
-
