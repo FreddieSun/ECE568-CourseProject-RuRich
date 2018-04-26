@@ -1,26 +1,6 @@
 version: "3.6"
 
 services:
-  prediction:
-    build:
-      context: ./prediction
-      dockerfile: Dockerfile
-    secrets:
-      - mongodb_password
-    ports:
-      - "5002:5001"
-    environment:
-      PYTHONUNBUFFERED: "1"
-      MONGODB_USERNAME: ece568
-      MONGODB_PASSWORD_FILE: /run/secrets/mongodb_password
-      MONGODB_HOST: zwithc.cn
-
-secrets:
-  mongodb_password:
-    file: ./mongo_initdb_root_password
-
-
-
 
   get-stock-data:
     build:
@@ -41,6 +21,11 @@ secrets:
 
   mongodb:
     image: mongo
+    deploy:
+      resources:
+        limits:
+#          cpus: "0.50"
+          memory: 300M
     secrets:
       - mongo_initdb_root_password
     environment:
@@ -65,8 +50,26 @@ secrets:
     environment:
       ME_CONFIG_MONGODB_SERVER: mongodb
 
+  prediction:
+    build:
+      context: ./prediction
+      dockerfile: Dockerfile
+    secrets:
+      - mongodb_password
+    ports:
+      - "5002:5001"
+    environment:
+      PYTHONUNBUFFERED: "1"
+      MONGODB_USERNAME: ece568
+      MONGODB_PASSWORD_FILE: /run/secrets/mongodb_password
+      MONGODB_HOST: mongodb
+    depends_on:
+      - mongodb
 
 secrets:
+  mongodb_password:
+    file: ./mongo_initdb_root_password
+
   alphavantag_api_key:
     file: ./alphavantag_api_key
   mongo_initdb_root_password:
