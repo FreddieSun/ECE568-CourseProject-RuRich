@@ -57,7 +57,11 @@ services:
     secrets:
       - mongodb_password
     ports:
-      - "5002:5001"
+      - "5001:5001"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.7'
     environment:
       PYTHONUNBUFFERED: "1"
       MONGODB_USERNAME: ece568
@@ -65,6 +69,20 @@ services:
       MONGODB_HOST: mongodb
     depends_on:
       - mongodb
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./web/target/FinalProject.war:/usr/local/tomcat/webapps/ROOT.war
+      - ./web/target/FinalProject:/usr/local/tomcat/webapps/ROOT
 
 secrets:
   mongodb_password:
