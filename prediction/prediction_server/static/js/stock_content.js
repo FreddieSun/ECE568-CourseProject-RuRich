@@ -33,7 +33,6 @@ $('#addnewcommentform').submit(function (event) {
 });
 
 
-
 function initKChart() {
 
 
@@ -365,6 +364,12 @@ function selectSymbol(symbol, period = null) {
         }
 
     }
+
+    const timestamp1 = Date.parse(new Date());
+
+    $.getJSON(api_prefix + '/api/v0.1.0/predict?symbol=' + symbol + '&term=long&timestamp=' + timestamp1, function (result) {
+        $('#long_bayes').text(res)
+    })
 
 
 }

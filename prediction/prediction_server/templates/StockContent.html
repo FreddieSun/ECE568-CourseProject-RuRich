@@ -95,7 +95,9 @@
                 </div>
             </div>
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-                <h1 class="h2" id="stockName">Dashboard</h1>
+                <h1 class="h2"><span id="stockName">Dashboard</span>
+                    &nbsp;&nbsp;prediction: long term:<span id="long_term"></span>
+                    &nbsp;&nbsp;short term:<span id="short_term"></span></h1>
                 <h1 class="h2">Peroid Type: <span id="peroidType"></span></h1>
                 <div class="btn-toolbar mb-2 mb-md-0">
                     <div class="btn-group mr-2">
@@ -183,6 +185,30 @@
                         <td>Advice for future:</td>
                         <td id="Advice"></td>
                     </tr>
+                    <tr>
+                        <td>Bayes(long term):</td>
+                        <td id="long_bayes"></td>
+                    </tr>
+                    <tr>
+                        <td>SVR(long term):</td>
+                        <td id="long_svr"></td>
+                    </tr>
+                    <tr>
+                        <td>ANN(long term):</td>
+                        <td id="long_ann"></td>
+                    </tr>
+                    <tr>
+                        <td>Bayes(short term):</td>
+                        <td id="short_bayes"></td>
+                    </tr>
+                    <tr>
+                        <td>SVR(short term):</td>
+                        <td id="short_svr"></td>
+                    </tr>
+                    <tr>
+                        <td>ANN(short term):</td>
+                        <td id="short_ann"></td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -245,7 +271,7 @@
 
         <!-- Graphs -->
     </div>
-
-        <script src="{{ url_for('static', filename='js/stock_content.js') }}"></script>
+</div>
+<script src="{{ url_for('static', filename='js/stock_content.js') }}"></script>
 </body>
 </html>
