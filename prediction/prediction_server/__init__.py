@@ -44,7 +44,7 @@ url = 'mongodb://{username}:{password}@{host}:{port}'.format(
 client = MongoClient(url)
 daily = client['ece568']['daily']
 realtime = client['ece568']['realtime']
-
+comment = client['ece568']['comment']
 
 from .views import *
 from .view_emergency import *

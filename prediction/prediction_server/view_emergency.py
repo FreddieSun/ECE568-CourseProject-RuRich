@@ -1,4 +1,4 @@
-from flask import jsonify, render_template
+from flask import jsonify, render_template, request
 
 from prediction_server import app
 from prediction_server import model_emergency
@@ -61,3 +61,15 @@ def get_avg(symbol: str):
 @app.route(api_prefix + 'getLowerAvg/<string:symbol>')
 def get_lower_avg(symbol: str):
     return jsonify(model_emergency.get_lower_avg(symbol))
+
+
+@app.route(api_prefix + 'stockresource/comment/<string:symbol>', methods=['GET', ])
+def get_commit(symbol: str):
+    return jsonify(model_emergency.get_comment(symbol))
+
+
+@app.route(api_prefix + 'stockresource/comment', methods=['POST', ])
+def add_commit():
+    model_emergency.add_comment(request.form['symbol'], request.form['comment'], request.form['timestamp'],
+                                request.form['username'])
+    return ''

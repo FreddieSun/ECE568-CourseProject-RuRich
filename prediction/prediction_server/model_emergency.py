@@ -1,29 +1,10 @@
+import arrow
 from pymongo import DESCENDING
 
-from prediction_server import realtime, daily
+from prediction_server import realtime, daily, comment
 
-
-# url = 'mongodb://{username}:{password}@{host}:{port}'.format(
-#         username=app.config.get('MONGODB_USERNAME'),
-#         password=app.config.get('MONGODB_PASSWORD'),
-#         host=app.config.get('MONGODB_HOST'),
-#         port=app.config.get('MONGODB_PORT')
-#     )
-#
-# client = MongoClient(url)
-# daily = client['ece568']['daily']
-# realtime = client['ece568']['realtime']
 
 def get_recent_price(symbol: str, n: int = 30):
-    # url = 'mongodb://{username}:{password}@{host}:{port}'.format(
-    #     username=app.config.get('MONGODB_USERNAME'),
-    #     password=app.config.get('MONGODB_PASSWORD'),
-    #     host=app.config.get('MONGODB_HOST'),
-    #     port=app.config.get('MONGODB_PORT')
-    # )
-    #
-    # client = MongoClient(url)
-    # daily = client['ece568']['daily']
 
     ret = []
     for row in daily.find({'symbol': symbol}, {'_id': 0, 'symbol': 0}).sort([('timestamp', DESCENDING)]).limit(n):
@@ -32,15 +13,6 @@ def get_recent_price(symbol: str, n: int = 30):
 
 
 def get_realtime_price(symbol: str, n: int = 30):
-    # url = 'mongodb://{username}:{password}@{host}:{port}'.format(
-    #     username=app.config.get('MONGODB_USERNAME'),
-    #     password=app.config.get('MONGODB_PASSWORD'),
-    #     host=app.config.get('MONGODB_HOST'),
-    #     port=app.config.get('MONGODB_PORT')
-    # )
-    #
-    # client = MongoClient(url)
-    # realtime = client['ece568']['realtime']
 
     ret = []
     for row in realtime.find({'symbol': symbol}, {'_id': 0, 'symbol': 0}).sort([('timestamp', DESCENDING)]).limit(n):
@@ -49,30 +21,12 @@ def get_realtime_price(symbol: str, n: int = 30):
 
 
 def get_least_price(symbol: str):
-    # url = 'mongodb://{username}:{password}@{host}:{port}'.format(
-    #     username=app.config.get('MONGODB_USERNAME'),
-    #     password=app.config.get('MONGODB_PASSWORD'),
-    #     host=app.config.get('MONGODB_HOST'),
-    #     port=app.config.get('MONGODB_PORT')
-    # )
-    #
-    # client = MongoClient(url)
-    # realtime = client['ece568']['realtime']
 
     return realtime.find({'symbol': symbol}, {'price': 1, '_id': 0}).sort([('timestamp', DESCENDING)]).limit(1)[0][
         'price']
 
 
 def get_all_symbol():
-    # url = 'mongodb://{username}:{password}@{host}:{port}'.format(
-    #     username=app.config.get('MONGODB_USERNAME'),
-    #     password=app.config.get('MONGODB_PASSWORD'),
-    #     host=app.config.get('MONGODB_HOST'),
-    #     port=app.config.get('MONGODB_PORT')
-    # )
-    #
-    # client = MongoClient(url)
-    # daily = client['ece568']['daily']
 
     ret = []
 
@@ -134,3 +88,21 @@ def get_lower_avg(symbol: str):
             ret.append(s)
 
     return ret
+
+
+def get_comment(symbol: str):
+    ret = []
+    for row in comment.find({'symbol': symbol}, {'_id': 0}).sort([('timestamp', DESCENDING)]).limit(5):
+        ret.append(row)
+
+    return {'comment': ret}
+
+
+def add_comment(symbol: str, comment_: str, timestamp: str, username: str):
+    comment.insert({
+        'symbol': symbol,
+        'comment': comment_,
+        'timestamp': arrow.utcnow().isoformat(),
+        'username': username
+    })
+    # print(symbol, ', ', comment, ', ', timestamp, ', ', username)

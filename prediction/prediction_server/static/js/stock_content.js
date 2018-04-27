@@ -16,29 +16,23 @@ $(document).ready(function () {
 
 });
 
-function initLChart() {
-    realtime = anychart.data.table();
 
-    realtime_mapping = realtime.mapAs();
-    realtime_mapping.addField('value', 1);
+$('#addnewcommentform').submit(function (event) {
+    event.preventDefault();
+    let f = $('#addnewcommentform');
+    $.post(api_prefix + 'stockresource/comment', f.serialize()).done(function (data) {
 
-    realtime_mapping2 = realtime.mapAs();
-    realtime_mapping2.addField('value', 2);
+        $.getJSON(api_prefix + 'stockresource/comment/' + CURRENT_SYMBOL, function (result) {
+            redrawComment(result);
+        });
+    });
+    document.getElementById("addnewcommentform").reset();
+    // alert(f.serialize());
 
 
-    chart = anychart.stock();
-    realtime_line = chart.plot(0).line(realtime_mapping);
+});
 
-// realtime_container
 
-    realtime_p1 = chart.plot(1);
-    realtime_p1.height('20%');
-    realtime_column = p1.column(realtime_mapping2);
-    realtime_column.name('Volume');
-    chart.container('realtime_container');
-    chart.draw();
-
-}
 
 function initKChart() {
 
@@ -293,6 +287,13 @@ function updateIndicator() {
 function selectSymbol(symbol, period = null) {
     // alert(symbol);
     CURRENT_SYMBOL = symbol;
+
+    $('#submitSymbol').attr('value', symbol);
+
+    $.getJSON(api_prefix + 'stockresource/comment/' + symbol, function (result) {
+        redrawComment(result);
+    });
+
     $('#stockName').text(symbol);
 
     if (period != null) {
@@ -439,3 +440,27 @@ function helpAdviceMACD(Test, high, low) {
         return "1";
 }
 
+function redrawComment(newData) {
+    const commentList = newData["comment"];
+    // if(commentList==null)
+    // {
+    //   document.getElementById('comments').innerHTML="<p>No comment yet</p>";
+    //   return;
+    // }
+    document.getElementById('comments').innerHTML = "";
+    for (let i = 0; i < commentList.length; i++) {
+        const current = document.createElement("div");
+        //console.log(current)
+        const h4 = document.createElement("h4");
+        h4.innerText = commentList[i]["username"] + " @ " + commentList[i]["timestamp"] + " said: ";
+        //console.log(h4)
+        const p = document.createElement("p");
+        p.innerText = commentList[i]["comment"];
+        const hr = document.createElement("hr");
+        current.appendChild(h4);
+        current.appendChild(p);
+        current.appendChild(hr);
+        document.getElementById("comments").appendChild(current);
+
+    }
+}
