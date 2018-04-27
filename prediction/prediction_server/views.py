@@ -1,6 +1,6 @@
 import arrow
 import numpy as np
-from flask import request, jsonify
+from flask import request, jsonify, render_template
 
 from prediction_engine.bayes import Bayes
 from prediction_engine.dnn import DNN
@@ -16,7 +16,8 @@ from prediction_server.models import checkParameters, getDailyData, \
 
 @app.route('/')
 def index_page():
-    return 'hello, world!'
+    # print(url_for(''))
+    return render_template('index.html')
 
 
 @app.route('/api/v0.0.1/test/daily')

@@ -3,6 +3,9 @@ version: "3.6"
 services:
 
   get-stock-data:
+    build:
+      context: ./get-stock-data
+      dockerfile: Dockerfile
     image: daixiaozi/get-stock-data
     command: ["python", "./run_app.py", 'GOOG', 'AABA', 'FB', 'MSFT', 'TWTR', 'AAPL', 'JPM', 'AMZN', 'JNJ', 'BAC'] # stock symbols
     secrets:
@@ -49,6 +52,9 @@ services:
       ME_CONFIG_MONGODB_SERVER: mongodb
 
   prediction:
+    build:
+      context: ./prediction
+      dockerfile: Dockerfile
     image: daixiaozi/prediction
     secrets:
       - mongo_initdb_root_password
@@ -67,17 +73,17 @@ services:
     depends_on:
       - mongodb
 
-  web:
-#    image: daixiaozi/web
-    deploy:
-      resources:
-        limits:
-          memory: 600M
-    ports:
-      - "80:8080"
-    volumes:
-      - ./web/target/FinalProject.war:/usr/local/tomcat/webapps/ROOT.war
-      - ./web/target/FinalProject:/usr/local/tomcat/webapps/ROOT
+#  web:
+##    image: daixiaozi/web
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 600M
+#    ports:
+#      - "80:8080"
+#    volumes:
+#      - ./web/target/FinalProject.war:/usr/local/tomcat/webapps/ROOT.war
+#      - ./web/target/FinalProject:/usr/local/tomcat/webapps/ROOT
 
 secrets:
 #  mongodb_password:

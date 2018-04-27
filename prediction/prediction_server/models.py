@@ -1,23 +1,23 @@
 from typing import List, Dict, Union
 
 import arrow
-from pymongo import MongoClient, DESCENDING
+from pymongo import DESCENDING
 from werkzeug.datastructures import ImmutableMultiDict
 
-from prediction_server import app
+from prediction_server import daily, realtime
 from prediction_server import error_code
 
 
 def checkDate(symbol: str, timestamp: str):
-    url = 'mongodb://{username}:{password}@{host}:{port}'.format(
-        username=app.config.get('MONGODB_USERNAME'),
-        password=app.config.get('MONGODB_PASSWORD'),
-        host=app.config.get('MONGODB_HOST'),
-        port=app.config.get('MONGODB_PORT')
-    )
-
-    client = MongoClient(url)
-    daily = client['ece568']['daily']
+    # url = 'mongodb://{username}:{password}@{host}:{port}'.format(
+    #     username=app.config.get('MONGODB_USERNAME'),
+    #     password=app.config.get('MONGODB_PASSWORD'),
+    #     host=app.config.get('MONGODB_HOST'),
+    #     port=app.config.get('MONGODB_PORT')
+    # )
+    #
+    # client = MongoClient(url)
+    # daily = client['ece568']['daily']
 
     t = arrow.get(timestamp).replace(tzinfo='+0000').floor('day')
 
@@ -105,15 +105,15 @@ def checkParameters(
 
 
 def checkSymbol(symbol: str):
-    url = 'mongodb://{username}:{password}@{host}:{port}'.format(
-        username=app.config.get('MONGODB_USERNAME'),
-        password=app.config.get('MONGODB_PASSWORD'),
-        host=app.config.get('MONGODB_HOST'),
-        port=app.config.get('MONGODB_PORT')
-    )
-
-    client = MongoClient(url)
-    daily = client['ece568']['daily']
+    # url = 'mongodb://{username}:{password}@{host}:{port}'.format(
+    #     username=app.config.get('MONGODB_USERNAME'),
+    #     password=app.config.get('MONGODB_PASSWORD'),
+    #     host=app.config.get('MONGODB_HOST'),
+    #     port=app.config.get('MONGODB_PORT')
+    # )
+    #
+    # client = MongoClient(url)
+    # daily = client['ece568']['daily']
 
     if symbol not in [ele['_id'] for ele in daily.aggregate([{"$group": {"_id": "$symbol"}}])]:
         return {
@@ -128,15 +128,15 @@ def checkSymbol(symbol: str):
 
 
 def getDailyData(symbol: str, timestamp: str = None, n: int = 50) -> Dict[str, List[Union[float, int]]]:
-    url = 'mongodb://{username}:{password}@{host}:{port}'.format(
-        username=app.config.get('MONGODB_USERNAME'),
-        password=app.config.get('MONGODB_PASSWORD'),
-        host=app.config.get('MONGODB_HOST'),
-        port=app.config.get('MONGODB_PORT')
-    )
-
-    client = MongoClient(url)
-    daily = client['ece568']['daily']
+    # url = 'mongodb://{username}:{password}@{host}:{port}'.format(
+    #     username=app.config.get('MONGODB_USERNAME'),
+    #     password=app.config.get('MONGODB_PASSWORD'),
+    #     host=app.config.get('MONGODB_HOST'),
+    #     port=app.config.get('MONGODB_PORT')
+    # )
+    #
+    # client = MongoClient(url)
+    # daily = client['ece568']['daily']
 
     query = {
         'symbol': symbol
@@ -171,15 +171,15 @@ def getDailyData(symbol: str, timestamp: str = None, n: int = 50) -> Dict[str, L
 
 
 def getRealtimeData(symbol: str, timestamp: str = None, n: int = 50) -> Dict[str, List[Union[float, int]]]:
-    url = 'mongodb://{username}:{password}@{host}:{port}'.format(
-        username=app.config.get('MONGODB_USERNAME'),
-        password=app.config.get('MONGODB_PASSWORD'),
-        host=app.config.get('MONGODB_HOST'),
-        port=app.config.get('MONGODB_PORT')
-    )
-
-    client = MongoClient(url)
-    realtime = client['ece568']['realtime']
+    # url = 'mongodb://{username}:{password}@{host}:{port}'.format(
+    #     username=app.config.get('MONGODB_USERNAME'),
+    #     password=app.config.get('MONGODB_PASSWORD'),
+    #     host=app.config.get('MONGODB_HOST'),
+    #     port=app.config.get('MONGODB_PORT')
+    # )
+    #
+    # client = MongoClient(url)
+    # realtime = client['ece568']['realtime']
 
     query = {
         'symbol': symbol

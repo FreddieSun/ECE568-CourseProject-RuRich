@@ -9,4 +9,4 @@ class VolatilityRatio(object):
         D = np.sum(historical_volume[np.where(price < historical_price)])
         U = np.sum(historical_volume[np.where(price == historical_price)])
 
-        return np.float_(100 * (A + U / 2) / (A + D + U))
+        return np.float_((A + U / 2) / (A + D + U))
