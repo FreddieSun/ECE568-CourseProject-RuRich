@@ -18,6 +18,7 @@ file_env() {
 	unset "$fileVar"
 }
 
+sleep 5m
 
 file_env 'ALPHAVANTAG_API_KEY'
 file_env 'MONGO_INITDB_ROOT_PASSWORD'

@@ -5,7 +5,7 @@ an OS that can run docker-ce and docker-compose on it
 2GiB+ free space in storage
 enough RAM and swap space
 Internet access
-port 27017, 8081 are available
+port 27017, 8081, 80, 5001 are available
 
 ---- the project is developed under ----
 - OS :

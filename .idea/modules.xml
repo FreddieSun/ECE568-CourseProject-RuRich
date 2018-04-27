@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/DatabaseUtil/DatabaseUtil.iml" filepath="$PROJECT_DIR$/DatabaseUtil/DatabaseUtil.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ECE568.iml" filepath="$PROJECT_DIR$/ECE568.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/ECE568-CourseProject.iml" filepath="$PROJECT_DIR$/.idea/ECE568-CourseProject.iml" />
     </modules>
   </component>
 </project>

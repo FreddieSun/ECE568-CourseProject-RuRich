@@ -71,7 +71,7 @@
 
                     <!--左边的sidebar-->
                     <li class="nav-item">
-                        <a class="nav-link" onclick=changeName("GOOG","stockName") href="#">
+                        <a class="nav-link" onclick=changeName("GOOG","stockName"); href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                  stroke-linejoin="round" class="feather feather-bar-chart-2">
@@ -84,7 +84,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" onclick=changeName("AABA","stockName") href="#">
+                        <a class="nav-link" onclick=changeName("AABA","stockName"); href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                  stroke-linejoin="round" class="feather feather-bar-chart-2">
@@ -97,7 +97,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" onclick=changeName("FB","stockName") href="#">
+                        <a class="nav-link" onclick=changeName("FB","stockName"); href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                  stroke-linejoin="round" class="feather feather-bar-chart-2">
@@ -110,7 +110,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" onclick=changeName("MSFT","stockName") href="#">
+                        <a class="nav-link" onclick=changeName("MSFT","stockName"); href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                  stroke-linejoin="round" class="feather feather-bar-chart-2">
@@ -124,7 +124,7 @@
 
 
                     <li class="nav-item">
-                        <a class="nav-link" onclick=changeName("TWTR","stockName") href="#">
+                        <a class="nav-link" onclick=changeName("TWTR","stockName"); href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                  stroke-linejoin="round" class="feather feather-bar-chart-2">
@@ -137,7 +137,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" onclick=changeName("AAPL","stockName") href="#">
+                        <a class="nav-link" onclick=changeName("AAPL","stockName"); href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                  stroke-linejoin="round" class="feather feather-bar-chart-2">
@@ -150,7 +150,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" onclick=changeName("JPM","stockName") href="#">
+                        <a class="nav-link" onclick=changeName("JPM","stockName"); href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                  stroke-linejoin="round" class="feather feather-bar-chart-2">
@@ -163,7 +163,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" onclick=changeName("AMZN","stockName") href="#">
+                        <a class="nav-link" onclick=changeName("AMZN","stockName"); href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                  stroke-linejoin="round" class="feather feather-bar-chart-2">
@@ -176,7 +176,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" onclick=changeName("JNJ","stockName") href="#">
+                        <a class="nav-link" onclick=changeName("JNJ","stockName"); href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                  stroke-linejoin="round" class="feather feather-bar-chart-2">
@@ -189,7 +189,7 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" onclick=changeName("BAC","stockName") href="#">
+                        <a class="nav-link" onclick=changeName("BAC","stockName"); href="#">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                  stroke-linejoin="round" class="feather feather-bar-chart-2">
@@ -295,6 +295,10 @@
                         <td>Stock with lower average price than selected stock</td>
                         <td id="Loweravg">0</td>
                     </tr>
+                    <tr>
+                        <td>Advice for future:</td>
+                        <td id="Advice"></td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -317,7 +321,7 @@
                 <div>
 
                     <div id="AddNewComments">
-                        <form action="http://zwithc.cn:8080/api/v0.1.0/stockresource/comment"
+                        <form action="http://rurich.zwithc.cn/api/v0.1.0/stockresource/comment"
                               method="post">
                             <input id="submitSymbol" type='hidden' name='symbol' value='' readonly="readonly"/>
                             <br/>
@@ -367,13 +371,28 @@
             //if(name=="Month")
             //if(name=="Day")
             //}
+
+
+            //Thresold
+            var VRhigh = 160;//高于卖出
+            var VRlow = 70;//低于买入
+
+            var EMAhigh = 0;
+            var EMAlow = 1;
+
+            var MACDhigh = 0;
+            var MACDlow = 0;
+
+            //last price
+            var lastPrice = 0;
+
             var stockName = "GOOG";
             var oringinalChartData = "";
             var High = "";
             var Avg = "";
             var Low = "";
             var Loweravg = "";
-            var type = "year"
+            var type = "year";
 
             var price = [];
             var volume = [];
@@ -407,29 +426,33 @@
             var originalCommentData;
 
             //start page
-            changeName("GOOG", "stockName")
+            changeName("GOOG", "stockName");
 
             function changeTerm(termTxt, id) {
                 VRdata = "";
-                VRdata = new Array();
+                VRdata = [];
 
                 EMAdata = "";
-                EMAdata = new Array();
+                EMAdata = [];
 
                 MACDdata = "";
-                MACDdata = new Array();
+                MACDdata = [];
                 document.getElementById(id).innerText = termTxt;
                 term = termTxt;
                 updateAll(stockName, type);
             }
 
             function getPredict(Data) {
-                var last = bayesData.length
-                console.log("last:" + last)
+                var last = bayesData.length;
+                console.log("last:" + last);
+
+                console.log("last indictor: " + VRdata[last - 1] + " , " + EMAdata[last - 1] + " , " + MACDdata[last - 1]);
+                getAdvice(VRdata[last - 1], EMAdata[last - 1], MACDdata[last - 1]);
+
                 bayesData[last] = Data["result"]["predictor"][0]["price"];
                 SVRData[last] = Data["result"]["predictor"][1]["price"];
                 DNNData[last] = Data["result"]["predictor"][2]["price"];
-                console.log("DNN: " + Data["result"]["predictor"][2]["price"])
+                console.log("DNN: " + Data["result"]["predictor"][2]["price"]);
                 PredictData[last] = Data["result"]["predictPrice"];
                 redrawC();
 
@@ -444,8 +467,11 @@
             function getMACD(Data) {
                 MACDsingle = Data["result"]["data"];
                 MACDdata.push(MACDsingle);
-                console.log("getMACD:" + MACDsingle)
+                console.log("getMACD:" + MACDsingle);
                 redrawC();
+                var last = bayesData.length;
+                console.log("last indictor: " + VRdata[last - 1] + " , " + EMAdata[last - 1] + " , " + MACDdata[last - 1]);
+                getAdvice(VRdata[last - 1], EMAdata[last - 1], MACDdata[last - 1]);
             }
 
             function getVR(Data) {
@@ -486,18 +512,18 @@
 
             function changeName(name, id) {
                 VRdata = "";
-                VRdata = new Array();
+                VRdata = [];
 
                 EMAdata = "";
-                EMAdata = new Array();
+                EMAdata = [];
 
                 MACDdata = "";
-                MACDdata = new Array();
+                MACDdata = [];
                 LabelTime = [];
                 if (dayState != null)
                     window.clearInterval(dayState);
                 type = "year";
-                document.getElementById("peroidType").innerText="Peroid Type: Year"
+                document.getElementById("peroidType").innerText = "Peroid Type: Year";
                 document.getElementById("peroid").innerText = "Year";
                 stockName = name;
                 document.getElementById(id).innerText = name + "";
@@ -510,15 +536,15 @@
 
             function updateAll(name, type) {
                 //获取表格相关的原始数据
-                update("http://zwithc.cn:8080/api/v0.1.0/stockresource/" + name + "?type=" + type + "&__callback=chart");
-                //console.log("http://zwithc.cn:8080/api/v0.1.0/stockresource/"+name+"?type="+type+"&__callback=chart")
+                update("http://rurich.zwithc.cn/api/v0.1.0/StockResource/" + name + "?type=" + type + "&__callback=chart");
+                //console.log("http://localhost:8080/FinalProject/api/v0.1.0/StockResource/"+name+"?type="+type+"&__callback=chart")
                 //获取Info相关的原始数据
-                update("http://zwithc.cn:8080/api/v0.1.0/stockresource/" + name + "?type=high&__callback=high");
-                update("http://zwithc.cn:8080/api/v0.1.0/stockresource/" + name + "?type=avg&__callback=avg");
-                update("http://zwithc.cn:8080/api/v0.1.0/stockresource/" + name + "?type=low&__callback=low");
-                update("http://zwithc.cn:8080/api/v0.1.0/stockresource/" + name + "?type=loweravg&__callback=lower")
+                update("http://rurich.zwithc.cn/api/v0.1.0/StockResource/" + name + "?type=high&__callback=high");
+                update("http://rurich.zwithc.cn/api/v0.1.0/StockResource/" + name + "?type=avg&__callback=avg");
+                update("http://rurich.zwithc.cn/api/v0.1.0/StockResource/" + name + "?type=low&__callback=low");
+                update("http://rurich.zwithc.cn/api/v0.1.0/StockResource/" + name + "?type=loweravg&__callback=lower");
                 //获取评论区原始数据
-                update("http://zwithc.cn:8080/api/v0.1.0/stockresource/" + name + "?type=comment&__callback=comment");
+                update("http://rurich.zwithc.cn/api/v0.1.0/StockResource/" + name + "?type=comment&__callback=comment");
                 setTimeout(function () {
                     updateChart(oringinalChartData);
                     redrawC();
@@ -546,8 +572,8 @@
                 for (var i = 0; i < time.length; i++) {
                     if (time[i] != "predict") {
                         //console.log("http://zwithc.cn:5001/api/v0.1.0/vr?symbol="+name+"&timestamp="+time[i]+"&jsonp_callback=getVR");
-                        update("http://zwithc.cn:5001/api/v0.1.0/vr?symbol=" + name + "&timestamp=" + time[i] + "&jsonp_callback=getVR")
-                        update("http://zwithc.cn:5001/api/v0.1.0/ema?symbol=" + name + "&timestamp=" + time[i] + "&jsonp_callback=getEMA")
+                        update("http://zwithc.cn:5001/api/v0.1.0/vr?symbol=" + name + "&timestamp=" + time[i] + "&jsonp_callback=getVR");
+                        update("http://zwithc.cn:5001/api/v0.1.0/ema?symbol=" + name + "&timestamp=" + time[i] + "&jsonp_callback=getEMA");
                         update("http://zwithc.cn:5001/api/v0.1.0/macd?symbol=" + name + "&timestamp=" + time[i] + "&jsonp_callback=getMACD")
                     }
                 }
@@ -556,13 +582,13 @@
 
             function changePeroid(name, id) {
                 VRdata = "";
-                VRdata = new Array();
+                VRdata = [];
 
                 EMAdata = "";
-                EMAdata = new Array();
+                EMAdata = [];
 
                 MACDdata = "";
-                MACDdata = new Array();
+                MACDdata = [];
                 LabelTime = [];
                 if (dayState != null)
                     window.clearInterval(dayState);
@@ -571,28 +597,28 @@
 
                 document.getElementById(id).innerText = name + "";
                 if (name == "Day") {
-                    type = "day"
-                    console.log("reachHere")
+                    type = "day";
+                    console.log("reachHere");
                     updateAll(stockName, "day");
                     dayState = setInterval(function () {
                         VRdata = "";
-                        VRdata = new Array();
+                        VRdata = [];
 
                         EMAdata = "";
-                        EMAdata = new Array();
+                        EMAdata = [];
 
                         MACDdata = "";
-                        MACDdata = new Array();
+                        MACDdata = [];
                         updateAll(stockName, "day");
                         console.log("N")
-                    }, 25000);
+                    }, 40000);
                 }
                 if (name == "Month") {
-                    type = "month"
+                    type = "month";
                     updateAll(stockName, "month");
                 }
                 if (name == "Year") {
-                    type = "year"
+                    type = "year";
                     updateAll(stockName, "year");
                 }
             }
@@ -651,21 +677,22 @@
                 else {
                     for (var i = 0; i < time.length; i++) {
                         if (time[i] != "predict") {
-                            LabelTime[i] = (new Date(time[i]).getHours() + ":" + new Date(time[i]).getMinutes() + ":" + new Date(time[i]).getSeconds())
+                            LabelTime[i] = (new Date(time[i]).getHours() + ":" + new Date(time[i]).getMinutes() + ":" + new Date(time[i]).getSeconds());
                             LabelTime[i + 1] = "predict"
                         }
                     }
                 }
 
                 //更新VR
-                updateVRdata(stockName, time)
+                updateVRdata(stockName, time);
                 volume = oringinalChartData["data"]["volume"];
                 price = oringinalChartData["data"]["price"];
+                lastPrice = price[price.length - 1];
                 for (var i = 0; i < volume.length; i++) {
                     volume[i] /= 100000;
                 }
                 //copy predict的原始数据
-                console.log("price:" + price)
+                console.log("price:" + price);
                 bayesData = [];
                 SVRData = [];
                 DNNData = [];
@@ -680,6 +707,7 @@
                 SVRData[price.length - 1] = price[price.length - 1];
                 PredictData[price.length - 1] = price[price.length - 1];
                 DNNData[price.length - 1] = price[price.length - 1];
+
                 // bayesData[price.length]=400;
                 // SVRData[price.length]=500;
                 // PredictData[price.length]=600;
@@ -701,7 +729,7 @@
                         //time[time.length-1]=ISO;
                         update("http://zwithc.cn:5001/api/v0.1.0/predict?symbol=" + stockName + "&term=" + term + "&timestamp=" + ISO + "&jsonp_callback=getPredict")
                     }
-                }, 1000)
+                }, 1000);
 
                 //console.log(volume);
                 console.log(VRdata);
@@ -813,10 +841,10 @@
                 for (var i = 0; i < commentList.length; i++) {
                     var current = document.createElement("div");
                     //console.log(current)
-                    var h4 = document.createElement("h4")
+                    var h4 = document.createElement("h4");
                     h4.innerText = commentList[i]["username"] + " @ " + commentList[i]["timestamp"] + " said: ";
                     //console.log(h4)
-                    var p = document.createElement("p")
+                    var p = document.createElement("p");
                     p.innerText = commentList[i]["comment"];
                     var hr = document.createElement("hr");
                     current.appendChild(h4);
@@ -829,11 +857,83 @@
 
             //更新单独的数据
             function updateInfo(High, Avg, Low, Loweravg) {
+                High = parseFloat(High);
+                High = High.toFixed(2);
+                Avg = parseFloat(Avg);
+                Avg = Avg.toFixed(2);
+                Low = parseFloat(Low);
+                Low = Low.toFixed(2);
                 document.getElementById("High").innerText = High;
                 document.getElementById("Avg").innerText = Avg;
                 document.getElementById("Low").innerText = Low;
                 document.getElementById("Loweravg").innerText = Loweravg;
             }
+
+            function getAdvice(VRlast, EMAlast, MACDlast) {
+                var resultArray = [];
+                resultArray[0] = helpAdviceVR(VRlast, VRhigh, VRlow);
+                resultArray[1] = helpAdviceEMA(EMAlast, EMAhigh, EMAlow);
+                resultArray[2] = helpAdviceMACD(MACDlast, MACDhigh, MACDlow);
+
+                console.log("resultArray: " + resultArray);
+
+                var buy = 0;
+                var hold = 0;
+                var sell = 0;
+                for (var x = 0; x < 3; x++) {
+                    // console.log(resultArray[x])
+                    if (resultArray[x] == "1")
+                        buy++;
+                    else if (resultArray[x] == "0")
+                        hold++;
+                    else if (resultArray[x] == "-1")
+                        sell++;
+                }
+                console.log(buy + "," + hold + "," + sell);
+                if (buy >= 2)
+                    changeAdvice("buy");
+                else if (hold >= 2)
+                    changeAdvice("hold");
+                else if (sell >= 2)
+                    changeAdvice("sell");
+                else
+                    changeAdvice("hold")
+
+
+            }
+
+            function helpAdviceVR(Test, high, low) {
+                if (Test <= low)
+                    return "1";
+                else if (Test <= high)
+                    return "0";
+                else if (Test > high)
+                    return "-1";
+            }
+
+            function helpAdviceEMA(Test, high, low) {
+                console.log("EMA Test: " + Test);
+                console.log("last price" + lastPrice);
+                Test = lastPrice - Test;
+                if (Test >= 0)
+                    return "1";
+                else
+                    return "-1";
+            }
+
+            function helpAdviceMACD(Test, high, low) {
+                if (Test < low)
+                    return "-1";
+                else if (Test <= high)
+                    return "0";
+                else if (Test > high)
+                    return "1";
+            }
+
+            function changeAdvice(value) {
+                document.getElementById("Advice").innerText = value;
+            }
+
 
 
             //更新left bar
@@ -883,9 +983,14 @@
             }
 
             setInterval(function () {
-                update("http://zwithc.cn:8080/api/v0.1.0/stockresource?__callback=callback");
+                update("http://rurich.zwithc.cn/api/v0.1.0/stockresource?__callback=callback");
                 updateLeftBar()
             }, 4000);
+
+            //Test Advice
+            // setTimeout(function(){
+            //     getAdvice(2,2,0.6)
+            // },4000);
 
             //更新表格
             var StockName = "";

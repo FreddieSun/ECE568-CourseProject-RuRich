@@ -1,6 +1,8 @@
 #!/bin/bash
 limit_in_bytes=$(cat /sys/fs/cgroup/memory/memory.limit_in_bytes)
 
+#sleep 30s
+
 # If not default limit_in_bytes in cgroup
 if [ "$limit_in_bytes" -ne "9223372036854771712" ]
 then
