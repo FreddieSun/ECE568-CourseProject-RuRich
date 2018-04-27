@@ -536,15 +536,15 @@
 
             function updateAll(name, type) {
                 //获取表格相关的原始数据
-                update("http://rurich.zwithc.cn/api/v0.1.0/StockResource/" + name + "?type=" + type + "&__callback=chart");
+                update("http://rurich.zwithc.cn/api/v0.1.0/stockresource/" + name + "?type=" + type + "&__callback=chart");
                 //console.log("http://localhost:8080/FinalProject/api/v0.1.0/StockResource/"+name+"?type="+type+"&__callback=chart")
                 //获取Info相关的原始数据
-                update("http://rurich.zwithc.cn/api/v0.1.0/StockResource/" + name + "?type=high&__callback=high");
-                update("http://rurich.zwithc.cn/api/v0.1.0/StockResource/" + name + "?type=avg&__callback=avg");
-                update("http://rurich.zwithc.cn/api/v0.1.0/StockResource/" + name + "?type=low&__callback=low");
-                update("http://rurich.zwithc.cn/api/v0.1.0/StockResource/" + name + "?type=loweravg&__callback=lower")
+                update("http://rurich.zwithc.cn/api/v0.1.0/stockresource/" + name + "?type=high&__callback=high");
+                update("http://rurich.zwithc.cn/api/v0.1.0/stockresource/" + name + "?type=avg&__callback=avg");
+                update("http://rurich.zwithc.cn/api/v0.1.0/stockresource/" + name + "?type=low&__callback=low");
+                update("http://rurich.zwithc.cn/api/v0.1.0/stockresource/" + name + "?type=loweravg&__callback=lower")
                 //获取评论区原始数据
-                update("http://rurich.zwithc.cn/api/v0.1.0/StockResource/" + name + "?type=comment&__callback=comment");
+                update("http://rurich.zwithc.cn/api/v0.1.0/stockresource/" + name + "?type=comment&__callback=comment");
                 setTimeout(function () {
                     updateChart(oringinalChartData);
                     redrawC();
