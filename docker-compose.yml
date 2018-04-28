@@ -59,11 +59,11 @@ services:
     secrets:
       - mongo_initdb_root_password
     ports:
-      - "5001:5001"
-    deploy:
-      resources:
-        limits:
-          cpus: '0.85'
+      - "80:5001"
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '0.85'
 #          memory: 250M
     environment:
       PYTHONUNBUFFERED: "1"

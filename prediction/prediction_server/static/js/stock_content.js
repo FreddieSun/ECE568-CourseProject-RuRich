@@ -365,11 +365,21 @@ function selectSymbol(symbol, period = null) {
 
     }
 
-    const timestamp1 = Date.parse(new Date());
+    const d = new Date();
+    const timestamp1 = d.toISOString();
 
-    $.getJSON(api_prefix + '/api/v0.1.0/predict?symbol=' + symbol + '&term=long&timestamp=' + timestamp1, function (result) {
-        $('#long_bayes').text(res)
-    })
+    $.getJSON(api_prefix + 'predict?symbol=' + symbol + '&term=long&timestamp=' + timestamp1, function (result) {
+        $('#long_bayes').text(result['result']['predictor'][0]['price'].toFixed(2));
+        $('#long_svr').text(result['result']['predictor'][1]['price'].toFixed(2));
+        $('#long_ann').text(result['result']['predictor'][2]['price'].toFixed(2));
+        $('#long_term').text(result['result']['predictPrice'].toFixed(2));
+    });
+    $.getJSON(api_prefix + 'predict?symbol=' + symbol + '&term=short&timestamp=' + timestamp1, function (result) {
+        $('#short_bayes').text(result['result']['predictor'][0]['price'].toFixed(2));
+        $('#short_svr').text(result['result']['predictor'][1]['price'].toFixed(2));
+        $('#short_ann').text(result['result']['predictor'][2]['price'].toFixed(2));
+        $('#short_term').text(result['result']['predictPrice'].toFixed(2));
+    });
 
 
 }

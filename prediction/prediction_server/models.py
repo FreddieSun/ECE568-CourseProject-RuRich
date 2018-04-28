@@ -9,16 +9,6 @@ from prediction_server import error_code
 
 
 def checkDate(symbol: str, timestamp: str):
-    # url = 'mongodb://{username}:{password}@{host}:{port}'.format(
-    #     username=app.config.get('MONGODB_USERNAME'),
-    #     password=app.config.get('MONGODB_PASSWORD'),
-    #     host=app.config.get('MONGODB_HOST'),
-    #     port=app.config.get('MONGODB_PORT')
-    # )
-    #
-    # client = MongoClient(url)
-    # daily = client['ece568']['daily']
-
     t = arrow.get(timestamp).replace(tzinfo='+0000').floor('day')
 
     if daily.find({'symbol': symbol, 'timestamp': t.datetime}).count() <= 0:
@@ -36,7 +26,7 @@ def checkDate(symbol: str, timestamp: str):
 
 def checkTimestamp(timestamp: str):
     try:
-        timestamp = arrow.get(timestamp)
+        arrow.get(timestamp)
     except:
         return {
             'type': 'error',
@@ -70,22 +60,6 @@ def checkParameters(
             }
         }
 
-    # invalid_type_parameters = []
-    # for k, v in parameterType.items():
-    #     if type(args.get(k)) not in v:
-    #         invalid_type_parameters.append(k)
-    # if invalid_type_parameters:
-    #     return {
-    #         'type': 'error',
-    #         'time': arrow.utcnow().isoformat(),
-    #         'error': {
-    #             'errorCode': error_code.ERROR_CODE_INVALID_PARAMETERS_TYPE,
-    #             'errorInfo': 'Invalid parameter type',
-    #             'invalidParametersType': [{'parameter': ele, 'types': [e.__name__ for e in parameterType[ele]]} for ele
-    #                                       in invalid_type_parameters]
-    #         }
-    #     }
-
     invalid_parameter = []
     for k, v in parameterOptions.items():
         if args.get(k) not in v:
@@ -105,16 +79,6 @@ def checkParameters(
 
 
 def checkSymbol(symbol: str):
-    # url = 'mongodb://{username}:{password}@{host}:{port}'.format(
-    #     username=app.config.get('MONGODB_USERNAME'),
-    #     password=app.config.get('MONGODB_PASSWORD'),
-    #     host=app.config.get('MONGODB_HOST'),
-    #     port=app.config.get('MONGODB_PORT')
-    # )
-    #
-    # client = MongoClient(url)
-    # daily = client['ece568']['daily']
-
     if symbol not in [ele['_id'] for ele in daily.aggregate([{"$group": {"_id": "$symbol"}}])]:
         return {
             'type': 'error',
@@ -128,16 +92,6 @@ def checkSymbol(symbol: str):
 
 
 def getDailyData(symbol: str, timestamp: str = None, n: int = 50) -> Dict[str, List[Union[float, int]]]:
-    # url = 'mongodb://{username}:{password}@{host}:{port}'.format(
-    #     username=app.config.get('MONGODB_USERNAME'),
-    #     password=app.config.get('MONGODB_PASSWORD'),
-    #     host=app.config.get('MONGODB_HOST'),
-    #     port=app.config.get('MONGODB_PORT')
-    # )
-    #
-    # client = MongoClient(url)
-    # daily = client['ece568']['daily']
-
     query = {
         'symbol': symbol
     }
@@ -171,16 +125,6 @@ def getDailyData(symbol: str, timestamp: str = None, n: int = 50) -> Dict[str, L
 
 
 def getRealtimeData(symbol: str, timestamp: str = None, n: int = 50) -> Dict[str, List[Union[float, int]]]:
-    # url = 'mongodb://{username}:{password}@{host}:{port}'.format(
-    #     username=app.config.get('MONGODB_USERNAME'),
-    #     password=app.config.get('MONGODB_PASSWORD'),
-    #     host=app.config.get('MONGODB_HOST'),
-    #     port=app.config.get('MONGODB_PORT')
-    # )
-    #
-    # client = MongoClient(url)
-    # realtime = client['ece568']['realtime']
-
     query = {
         'symbol': symbol
     }

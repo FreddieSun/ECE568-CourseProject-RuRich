@@ -5,7 +5,6 @@ from prediction_server import realtime, daily, comment
 
 
 def get_recent_price(symbol: str, n: int = 30):
-
     ret = []
     for row in daily.find({'symbol': symbol}, {'_id': 0, 'symbol': 0}).sort([('timestamp', DESCENDING)]).limit(n):
         ret.append(row)
@@ -13,7 +12,6 @@ def get_recent_price(symbol: str, n: int = 30):
 
 
 def get_realtime_price(symbol: str, n: int = 30):
-
     ret = []
     for row in realtime.find({'symbol': symbol}, {'_id': 0, 'symbol': 0}).sort([('timestamp', DESCENDING)]).limit(n):
         ret.append(row)
@@ -21,13 +19,11 @@ def get_realtime_price(symbol: str, n: int = 30):
 
 
 def get_least_price(symbol: str):
-
     return realtime.find({'symbol': symbol}, {'price': 1, '_id': 0}).sort([('timestamp', DESCENDING)]).limit(1)[0][
         'price']
 
 
 def get_all_symbol():
-
     ret = []
 
     for row in daily.aggregate([{'$group': {'_id': '$symbol'}}, {'$sort': {'_id': 1}}]):
