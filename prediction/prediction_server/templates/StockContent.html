@@ -43,11 +43,6 @@
         to {
             opacity: 1
         }
-    }
-
-    .chartjs-render-monitor {
-        -webkit-animation: chartjs-render-animation 0.001s;
-        animation: chartjs-render-animation 0.001s;
     }</style>
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/stock_content.css') }}">
@@ -73,18 +68,13 @@
         <nav class="col-md-2 d-none d-md-block bg-light sidebar">
             <div class="sidebar-sticky">
                 <ul id="left_sidebar_ul" class="nav flex-column" style="padding-top: 36px">
-
                     <!--左边的sidebar-->
-
-
                 </ul>
-
-
             </div>
         </nav>
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
             <div class="chartjs-size-monitor"
-                 style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                 style="position: absolute; left: 0; top: 0; right: 0; bottom: 0; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
                 <div class="chartjs-size-monitor-expand"
                      style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
                     <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
@@ -101,9 +91,6 @@
                 <h1 class="h2">Peroid Type: <span id="peroidType"></span></h1>
                 <div class="btn-toolbar mb-2 mb-md-0">
                     <div class="btn-group mr-2">
-
-                        <!--           <button class="btn btn-sm btn-outline-secondary">Share</button>
-                          <button class="btn btn-sm btn-outline-secondary">Export</button> -->
                         <div class="social-share" data-initialized="true">
                             <a href="#" class="social-share-icon icon-twitter"></a>
                             <a href="#" class="social-share-icon icon-google"></a>
@@ -111,19 +98,6 @@
                         </div>
 
                     </div>
-<!--
-                    <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"
-                                id="indictor">Long Term
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a href="#" onclick=changeTerm("long","indictor")>Long Term</a></li>
-                            <li><a href="#" onclick=changeTerm("short","indictor")>Short Term</a></li>
-
-                        </ul>
-                    </div>
--->
-
                     <div class="dropdown">
                         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown"
                                 id="peroid">Period
@@ -237,41 +211,37 @@
                             <br/>
                             Name:
                             <br/>
-                            <input type='text' name='username' style="width: 100%"/>
+                            <input title="username" type='text' name='username' style="width: 100%"/>
                             <br/>
                             Comment:
                             <br/>
-                            <textarea rows="10" name='comment' style="width: 100%"></textarea>
+                            <textarea title="comment" rows="10" name='comment' style="width: 100%"></textarea>
                             <br>
                             <input id="submitTime" type="hidden" name="timestamp" value="" readonly="readonly"/>
                             <br/>
                             <input type='submit' class="btn btn-sm btn-outline-secondary" value='submit'/>
-
                         </form>
                     </div>
                 </div>
             </div>
-
         </main>
-
-
-        <!-- Bootstrap core JavaScript
-          ================================================== -->
-        <!-- Placed at the end of the document so the pages load faster -->
-
-        <script>window.jQuery || document.write('<script src="{{ url_for('static', filename='js/jquery-slim.min.js') }}"><\/script>')</script>
-        <script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-
-        <!-- Icons -->
-        <script src="{{ url_for('static', filename='js/feather.min.js') }}"></script>
-        <script>
-            feather.replace()
-        </script>
-
-        <!-- Graphs -->
     </div>
 </div>
+<!-- Bootstrap core JavaScript
+          ================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+
+<script>window.jQuery || document.write('<script src="{{ url_for('static', filename='js/jquery-slim.min.js') }}"><\/script>')</script>
+<script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+<!-- Icons -->
+<script src="{{ url_for('static', filename='js/feather.min.js') }}"></script>
+<script>
+    feather.replace()
+</script>
+
+<!-- Graphs -->
 <script src="{{ url_for('static', filename='js/stock_content.js') }}"></script>
 </body>
 </html>

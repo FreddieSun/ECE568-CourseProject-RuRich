@@ -67,8 +67,8 @@ module.exports = {
         //  >>>>  Using an admin account allows you to view and edit all databases, and view stats
 
         //leave username and password empty if no admin account exists
-        adminUsername: process.env.ME_CONFIG_MONGODB_ADMINUSERNAME || 'ece568',
-        adminPassword: process.env.ME_CONFIG_MONGODB_ADMINPASSWORD || 'ece568project',
+        adminUsername: process.env.ME_CONFIG_MONGODB_ADMINUSERNAME || '',
+        adminPassword: process.env.ME_CONFIG_MONGODB_ADMINPASSWORD || '',
 
         //whitelist: hide all databases except the ones in this list  (empty list for no whitelist)
         whitelist: [],
@@ -97,8 +97,8 @@ module.exports = {
     useBasicAuth: process.env.ME_CONFIG_BASICAUTH_USERNAME !== '',
 
     basicAuth: {
-        username: process.env.ME_CONFIG_BASICAUTH_USERNAME || 'ece568',
-        password: process.env.ME_CONFIG_BASICAUTH_PASSWORD || 'ece568',
+        username: process.env.ME_CONFIG_BASICAUTH_USERNAME || 'admin',
+        password: process.env.ME_CONFIG_BASICAUTH_PASSWORD || 'pass',
     },
 
     options: {

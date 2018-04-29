@@ -457,11 +457,6 @@ function helpAdviceMACD(Test, high, low) {
 
 function redrawComment(newData) {
     const commentList = newData["comment"];
-    // if(commentList==null)
-    // {
-    //   document.getElementById('comments').innerHTML="<p>No comment yet</p>";
-    //   return;
-    // }
     document.getElementById('comments').innerHTML = "";
     for (let i = 0; i < commentList.length; i++) {
         const current = document.createElement("div");
