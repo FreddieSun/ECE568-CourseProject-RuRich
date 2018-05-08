@@ -1,0 +1,98 @@
+version: "3.6"
+
+services:
+
+  get-stock-data:
+    build:
+      context: ./get-stock-data
+      dockerfile: Dockerfile
+    image: daixiaozi/get-stock-data
+    command: ["python", "./run_app.py", 'GOOG', 'AABA', 'FB', 'MSFT', 'TWTR', 'AAPL', 'JPM', 'AMZN', 'JNJ', 'BAC'] # stock symbols
+    secrets:
+      - alphavantag_api_key
+      - mongo_initdb_root_password
+    environment:
+      ALPHAVANTAG_API_KEY_FILE: /run/secrets/alphavantag_api_key
+      MONGO_INITDB_ROOT_USERNAME: ece568
+      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/mongo_initdb_root_password
+      MONGO_HOST: mongodb
+      PYTHONUNBUFFERED: "1"
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo
+#    deploy:
+#      resources:
+#        limits:
+##          cpus: "0.50"
+#          memory: 300M
+    secrets:
+      - mongo_initdb_root_password
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ece568
+      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/mongo_initdb_root_password
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+      - mongodb-config:/data/configdb
+
+  mongodb-express:
+    image: mongo-express
+    depends_on:
+      - mongodb
+    volumes:
+      - type: bind
+        source: ./mongo-express-config.js
+        target: /node_modules/mongo-express/config.js
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_SERVER: mongodb
+
+  prediction:
+    build:
+      context: ./prediction
+      dockerfile: Dockerfile
+    image: daixiaozi/prediction
+    secrets:
+      - mongo_initdb_root_password
+    ports:
+      - "80:5001"
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '0.85'
+#          memory: 250M
+    environment:
+      PYTHONUNBUFFERED: "1"
+      MONGODB_USERNAME: ece568
+      MONGODB_PASSWORD_FILE: /run/secrets/mongo_initdb_root_password
+      MONGODB_HOST: mongodb
+    depends_on:
+      - mongodb
+
+#  web:
+##    image: daixiaozi/web
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 600M
+#    ports:
+#      - "80:8080"
+#    volumes:
+#      - ./web/target/FinalProject.war:/usr/local/tomcat/webapps/ROOT.war
+#      - ./web/target/FinalProject:/usr/local/tomcat/webapps/ROOT
+
+secrets:
+#  mongodb_password:
+#    file: ./mongo_initdb_root_password
+  alphavantag_api_key:
+    file: ./alphavantag_api_key
+  mongo_initdb_root_password:
+    file: ./mongo_initdb_root_password
+
+volumes:
+  mongodb-data:
+  mongodb-config:
